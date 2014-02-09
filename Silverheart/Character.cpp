@@ -4,8 +4,6 @@
 Character::Character(void)
 {
 }
-
-
 Character::~Character(void)
 {
 }
@@ -34,6 +32,13 @@ void Character::create(float sizeX, float sizeY)
 	agk::SetSpritePhysicsMass(sensor, 0);
 	agk::SetSpritePhysicsIsSensor(sensor, 1);
 
+	agk::SetSpriteCategoryBit(body, 1, 0);
+	agk::SetSpriteCategoryBit(leg, 1, 0);
+	agk::SetSpriteCategoryBit(body, 2, 1);
+	agk::SetSpriteCategoryBit(leg, 2, 1);
+	agk::SetSpriteCollideBit(body, 2, 0);
+	agk::SetSpriteCollideBit(leg, 2, 0);
+
 	/*for(int i = 0; i < 2; i++)
 	{
 		sides[i] = agk::CloneSprite(1);
@@ -53,11 +58,15 @@ void Character::create(float sizeX, float sizeY)
 
 	//agk::CreateWeldJoint(sides[0], body, -sizeX / 2, sizeY / 2, 0);
 	//agk::CreateWeldJoint(sides[1], body, sizeX / 2, sizeY / 2, 0);
+
+	setSprite(1);
 }
 void Character::update()
 {
 	this->x = agk::GetSpriteXByOffset(body);
 	this->y = agk::GetSpriteYByOffset(body);
+
+	agk::SetSpritePositionByOffset(SID, x, y);
 }
 
 void Character::targetSpeed(float speed)
@@ -84,6 +93,13 @@ bool Character::checkOnGround(World* world)
 	return false;
 }
 
+void Character::setSprite(int SID)
+{
+	this->SID = agk::CloneSprite(SID);
+
+	agk::SetSpriteScale(this->SID, sizeX / agk::GetImageWidth(agk::GetSpriteImageID(SID)), sizeY / agk::GetImageHeight(agk::GetSpriteImageID(SID)));
+	agk::SetSpriteVisible(this->SID, 1);
+}
 void Character::setPosition(float x, float y)
 {
 	this->x = x;

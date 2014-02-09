@@ -1,7 +1,7 @@
 #include "IngameMenu.h"
 
 
-bool IngameMenu::menuActive;
+/*bool IngameMenu::menuActive;
 int IngameMenu::bgSprite;
 Button IngameMenu::button[10];
 MenuList IngameMenu::list[10];
@@ -221,3 +221,4 @@ void MenuList::update()
 		}
 	}
 }
+*/

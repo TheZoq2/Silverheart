@@ -8,7 +8,7 @@
 #include "Input.h"
 #include "Item.h"
 
-class Button
+/*class Button
 {
 public:
 	Button(void);
@@ -73,4 +73,4 @@ private:
 
 	static Button button[10];
 	static MenuList list[10];
-};
+};*/

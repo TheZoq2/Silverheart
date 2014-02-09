@@ -160,7 +160,7 @@ void Script::runFunction(uString function, Part* part, World* world, Player* pla
 	if(command.CompareTo("openShop") == 0)
 	{
 		//Opening the shop
-		IngameMenu::createShop(player, 1);
+		//IngameMenu::createShop(player, 1);
 	}
 	
 	//Print command

@@ -165,3 +165,11 @@ bool Input::shoot()
 	}
 	return false;
 }
+bool Input::click()
+{
+	if(agk::GetPointerPressed() == 1)
+	{
+		return true;
+	}
+	return false;
+}

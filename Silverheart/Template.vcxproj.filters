@@ -103,9 +103,6 @@
     <ClCompile Include="Core.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="DataReader.cpp">
-      <Filter>Headers</Filter>
-    </ClCompile>
     <ClCompile Include="DebugConsole.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -161,6 +158,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="zString.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="DataReader.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

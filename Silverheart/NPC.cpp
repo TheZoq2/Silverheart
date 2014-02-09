@@ -1,6 +1,7 @@
 #include "NPC.h"
 
 #include "DebugConsole.h"
+#include "LuaHandler.h"
 
 char NPC_path[128] = "Data/Characters/";
 
@@ -29,7 +30,8 @@ void NPC::update(World* world)
 {
 	if(exists == true) //Making sure that the NPC exists before doing anything with it
 	{
-		chr.update(world); //Updating the character
+		l_lastNPC = this;
+		chr.update(); //Updating the character
 
 		this->x = chr.getX();
 		this->y = chr.getY();
@@ -40,37 +42,6 @@ void NPC::update(World* world)
 		}
 		else if(state == NPC_passiveState)
 		{
-			/*float walkChanse = 100 / (frameTime*1000); //TODO: Fix this to a more reasonable value
-
-			int randVal = rand() % 100; //Selecting a random value which should be used to determine if the NPC should walk
-			randVal = 0;
-			if(randVal < floor(walkChanse))
-			{
-				
-				//Finding a suitable path to the 
-				NodeLink closestPath = findClosestNodes(world);
-
-				//Making sure there was a node relativley nearby
-				if(closestPath.node[0] != -1)
-				{
-					PathNode* node[2];
-					node[0] = world->findNodeById(closestPath.node[0]);
-					node[1] = world->findNodeById(closestPath.node[1]);
-					//Drawing the node link
-					
-					//agk::DrawLine(agk::WorldToScreenX(node[0]->getX()), agk::WorldToScreenY(node[0]->getY()), agk::WorldToScreenX(node[1]->getX()), agk::WorldToScreenY(node[1]->getY()), 255, 0, 0);
-
-					//Selecting a random node to walk to
-					int targetNode = agk::Random(0, 1);
-
-					path->push_back(closestPath.node[targetNode]);
-
-					state = NPC_walkingState;
-				}
-				
-			}*/
-
-			
 			//Clearing the path
 			path->clear();
 
@@ -79,84 +50,10 @@ void NPC::update(World* world)
 		}
 		else if(state == NPC_walkingState)
 		{
-			/*if(path->size() != 0)
-			{
-				
-				//Getting the target node
-				PathNode* targetNode = world->findNodeById(path->at(0));
-
-				float targetX = targetNode->getX();
-
-				float targetDiff = targetX - this->x;
-
-				if(targetDiff < 0)
-				{
-					chr.walkLeft();
-				}
-				else if(targetDiff > 0)
-				{
-					chr.walkRight();
-				}
-				
-				//Checking if the node has been reached
-
-				float xDist = chr.getFeetX() - targetNode->getX();
-				float yDist = chr.getFeetY() - targetNode->getY();
-				float totDist = sqrt(pow(xDist, 2) + pow(yDist, 2));
-
-				if(totDist < 2)
-				{
-					//Remove this node
-					path->pop_front();
-				}
-
-				//Highlight the path
-				for(unsigned int i = 0; i < path->size(); i++)
-				{
-					PathNode* cNode = world->findNodeById(path->at(i));
-
-					float xPos = cNode->getX();
-					float yPos = cNode->getY();
-
-					for(unsigned int n = 0; n < cNode->getLinkAmount(); n++)
-					{
-						PathNode* lNode = world->findNodeById(cNode->getLinkID(n));
-
-						float xPos2 = lNode->getX();
-						float yPos2 = lNode->getY();
-
-						agk::DrawLine(agk::WorldToScreenX(xPos), agk::WorldToScreenY(yPos), agk::WorldToScreenX(xPos2), agk::WorldToScreenY(yPos2), 255, 0, 0);
-					}
-				}
-				
-			}
-			else
-			{
-				/*
-				//The last node has been reached, move the final distance to the goal node
-				if(chr.getFeetX() > goalX)
-				{
-					chr.walkLeft();
-				}
-				else
-				{
-					chr.walkRight();
-				}
-
-				//Checking if the goal has been reached
-				float xDist = goalX - chr.getFeetX();
-				float yDist = goalY - chr.getFeetY();
-				float totDist = sqrt(pow(xDist, 2) + pow(yDist, 2));
-
-				if(totDist < 3.5)
-				{
-					//Exiting walk state
-					state = NPC_passiveState;
-				}
-				
-			}
-			*/
+			
 		}
+
+		LuaHandler::runScript(updateScript);
 	}
 }
 void NPC::updateChars(std::vector< NPC >* npc, Player* player)
@@ -241,6 +138,10 @@ void NPC::createFromName(uString name)
 				{
 					colSprite.SetStr(DataReader::getValue(p)); //Saving the name of the collision sprite for future use
 				}
+				else if(type.CompareTo("UpdateScript") == 0)
+				{
+					updateScript = DataReader::getValue(p);
+				}
 			}
 
 			delete[] p; //Removing the string
@@ -256,7 +157,7 @@ void NPC::createFromName(uString name)
 		colPath.SetStr( GF::getPath(colSprite) ); 
 		if(agk::GetFileExists(colPath))
 		{
-			chr.create(colPath);
+			chr.create(64, 128);
 
 			exists = true;
 		}
@@ -284,6 +185,33 @@ void NPC::setGoal(float goalX, float goalY)
 {
 	this->goalX = goalX;
 	this->goalY = goalY;
+}
+
+float NPC::getX()
+{
+	return chr.getX();
+}
+float NPC::getY()
+{
+	return chr.getY();
+}
+
+Flag* NPC::getFlag(std::string name)
+{
+	for(unsigned int i = 0; i < flags.size(); i++)
+	{
+		if(flags.at(i).getName().compare(name) == 0)
+		{
+			return &flags.at(i);
+		}
+	}
+	return NULL;
+}
+void NPC::addFlag(std::string name, int value)
+{
+	Flag tempFlag;
+	tempFlag.create(name, value);
+	flags.push_back(tempFlag);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -441,6 +369,25 @@ float Waypoint::getY()
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void Flag::create(std::string name, int value)
+{
+	this->name = name;
+	this->value = value;
+}
+std::string Flag::getName()
+{
+	return name;
+}
+int Flag::getValue()
+{
+	return value;
+}
+void Flag::setValue(int value)
+{
+	this->value = value;
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void NPCGroup::setup()
 {
 	npc = new std::vector< NPC >;
@@ -459,6 +406,16 @@ void NPCGroup::updateChars(NPCGroup* npcGroup, Player* player)
 	{
 		npc->at(i).updateChars(npc, player);
 	}
+}
+
+NPC* NPCGroup::getLastNPC()
+{
+	if(npc->size() > 0)
+	{
+		return &npc->back();
+	}
+
+	return NULL;
 }
 
 void NPCGroup::addNPCFromFile(uString file)

@@ -44,5 +44,6 @@ public:
 	static float moveX();
 
 	static bool shoot(); //Return 1 for pointer state, 2 for press
+	static bool click();
 };
 

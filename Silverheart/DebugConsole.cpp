@@ -70,7 +70,7 @@ void DebugConsole::setVisible(int visible)
 {
 	agk::SetTextVisible(dc_textID, visible);
 	agk::SetEditBoxVisible(dc_editID, visible);
-	//agk::SetSpriteVisible(dc_bgSID, visible);
+	agk::SetSpriteVisible(dc_bgSID, visible);
 
 	if(visible == 1)
 	{

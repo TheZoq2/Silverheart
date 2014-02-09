@@ -84,3 +84,39 @@ int DataReader::getValueAmount(uString line)
 {
 	return line.Count(',');
 }
+
+std::vector<std::string> DataReader::getArray(std::string data)
+{
+	std::vector<std::string> result;
+	
+	//Finding the first [
+	std::size_t lastEnd = 0;
+
+	bool finished = false;
+	while(finished == false)
+	{
+		std::size_t startPos = data.find("[", lastEnd + 1);
+		std::size_t endPos = data.find("]", lastEnd + 1);
+
+		if(startPos == std::string::npos)
+		{
+			finished = true;
+			break;
+		}
+
+		if(endPos == std::string::npos)
+		{
+			finished = true;
+
+			DebugConsole::addToLog("Failed to read array part, missing ]");
+
+			break;
+		}
+
+		result.push_back(data.substr(startPos + 1, endPos - startPos - 1));
+
+		lastEnd = endPos;
+	}
+
+	return result;
+}

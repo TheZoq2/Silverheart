@@ -5,54 +5,40 @@
 #include "Part.h"
 #include "DebugConsole.h"
 #include "zString.h"
+#include "DataReader.h"
 
 #include <vector>
 #include <list>
 #include <string>
 #include <random>
 
-/*class NodeLink
-{
-public:
-	void setNode(int index, int ID);
-	void setType(int type);
-	void setID(int ID);
-
-	int getNode(int index);
-	int getID();
-	int getType();
-	
-	bool isBadLink();
-	bool compareTo(NodeLink link);
-private:
-	int ID;
-	int node[2];
-
-	int type;
-};
-
-
 class PathNode
 {
 public:
-	void create(int ID, float x, float y);
-	void setPos(float x, float y);
+	void create(int vecID, float x, float y);
 
-	void addLink(int ID);
-
-	int getID();
+	int getVecID();
 	float getX();
 	float getY();
-	unsigned int getLinkAmount();
-	int getLinkID(unsigned int slot);
 private:
-	int ID;
-
 	float x;
 	float y;
 
-	std::vector< int >* linkIDs;
-};*/
+	int vecID;
+};
+class PathLink
+{
+public:
+	void create(int vecID, int node0, int node1, int type);
+
+	int getNodeID(int index);
+private:
+	int vecID;
+
+	int nodes[2];
+
+	int type;
+};
 
 class World
 {
@@ -132,11 +118,10 @@ public:
 	//Pathfinding functions
 	void generateNodes();
 	void displayNodes();
-	//PathNode* findNodeById(int ID);
 	unsigned int getNodeAmount();
-	//PathNode* findNodeBySlot(unsigned int slot);
+	PathNode* findNodeById(int ID);
+	PathLink* findLinkById(int ID);
 
-	//NodeLink* getClosestLink(float x, float y);
 
 	void addPartToUpdate(Part* part);
 private:
@@ -215,8 +200,8 @@ private:
 	int lightSky;
 
 	//Pathfinding variables
-	//std::vector< PathNode >* node;
-	//std::vector< NodeLink >* nodeLinks;
+	std::vector< PathNode >* nodes;
+	std::vector< PathLink >* links;
 
 	int lastActive; //The name of the part that was activated last
 };

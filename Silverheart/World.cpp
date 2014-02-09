@@ -23,8 +23,8 @@ void World::begin()
 
 	stars = new std::vector< Star >;
 
-	//node = new std::vector< PathNode >;
-	//nodeLinks = new std::vector< NodeLink >;
+	nodes = new std::vector< PathNode >;
+	links = new std::vector< PathLink >;
 
 	cloudLayers = 4;
 }
@@ -61,6 +61,10 @@ void World::load(uString filename)
 				float angle = 0;
 				int physState = 0;
 				int depth = GF_BaseDepth;
+				int visible = 1;
+				int usable = 0;
+				std::string useScript = "";
+				std::string useMsg = "";
 
 				std::string name;
 
@@ -116,6 +120,22 @@ void World::load(uString filename)
 						{
 							name = dataValue;
 						}
+						else if(dataType.compare("visible") == 0)
+						{
+							visible = atoi(dataValue.data());
+						}
+						else if(dataType.compare("usable") == 0)
+						{
+							usable = atoi(dataValue.data());
+						}
+						else if(dataType.compare("useScript") == 0)
+						{
+							useScript = dataValue;
+						}
+						else if(dataType.compare("useMsg") == 0)
+						{
+							useMsg = dataValue;
+						}
 						else
 						{
 							DebugConsole::addC("Unrecognised datatype: ");DebugConsole::addC(dataType.data());
@@ -124,7 +144,6 @@ void World::load(uString filename)
 					}
 				}
 
-				
 				Part tempPart;
 
 				//Checking if the sprite exists
@@ -148,9 +167,13 @@ void World::load(uString filename)
 					tempPart.setAngle(angle);
 					tempPart.setDepth(depth);
 					tempPart.setPhysState(physState);
-					tempPart.setVisible(1);
+					tempPart.setVisible(visible);
 
 					tempPart.setName(name.data());
+
+					tempPart.setActScript(useScript.data());
+					tempPart.setUsable(usable);
+					tempPart.setUseMsg(useMsg.data());
 
 					this->part->push_back(tempPart);
 				}
@@ -163,6 +186,100 @@ void World::load(uString filename)
 			DebugConsole::addC(", invalid version: ");DebugConsole::addToLog(p);
 		}
 	
+		//Reading additional data
+		while(agk::FileEOF(fileID) == 0)
+		{
+			char * p;
+			p = agk::ReadString(fileID);
+			std::string str = p;
+			delete[] p;
+
+			//Splitting the string at the = sign
+			std::vector< std::string > data = zString::split(str, "=");
+			
+			if(data.size() == 2)
+			{
+				if(data.at(0).compare("nodes") == 0)
+				{
+					std::vector< std::string > arrays = DataReader::getArray(data.at(1));
+
+					for(unsigned int i = 0; i < arrays.size(); i++)
+					{
+						std::vector<std::string> variables = zString::split(arrays.at(i), ",");
+
+						int vecID;
+						float x;
+						float y;
+
+						for(unsigned int n = 0; n < variables.size(); n++)
+						{
+							std::string dataType = DataReader::getType(variables.at(n).data());
+							std::string dataValue = DataReader::getValue(variables.at(n).data(), 0);
+
+							if(dataType.compare("vecID") == 0)
+							{
+								vecID = atoi(dataValue.data());
+							}
+							if(dataType.compare("x") == 0)
+							{
+								x = atof(dataValue.data());
+							}
+							if(dataType.compare("y") == 0)
+							{
+								y = atof(dataValue.data());
+							}
+						}
+
+						PathNode tempNode;
+						tempNode.create(vecID, x, y);
+						nodes->push_back(tempNode);
+					}
+				}
+
+				if(data.at(0).compare("links") == 0)
+				{
+					std::vector< std::string > arrays = DataReader::getArray(data.at(1));
+
+					for(unsigned int i = 0; i < arrays.size(); i++)
+					{
+						std::vector<std::string> variables = zString::split(arrays.at(i), ",");
+
+						int vecID;
+						float node0;
+						float node1;
+						int type;
+
+						for(unsigned int n = 0; n < variables.size(); n++)
+						{
+							std::string dataType = DataReader::getType(variables.at(n).data());
+							std::string dataValue = DataReader::getValue(variables.at(n).data(), 0);
+
+							if(dataType.compare("vecID") == 0)
+							{
+								vecID = atoi(dataValue.data());
+							}
+							if(dataType.compare("node0") == 0)
+							{
+								node0 = atoi(dataValue.data());
+							}
+							if(dataType.compare("node1") == 0)
+							{
+								node1 = atoi(dataValue.data());
+							}
+							if(dataType.compare("type") == 0)
+							{
+								type = atoi(dataValue.data());
+							}
+						}
+
+						PathLink tempLink;
+						tempLink.create(vecID, node0, node1, type);
+						links->push_back(tempLink);
+					}
+				}
+			}
+		}
+
 	agk::CloseFile(fileID);
 
 	loadBG();
@@ -1071,231 +1188,51 @@ void World::addPartToUpdate( Part* part)
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////
-
-/*
-void World::displayNodes()
-{
-	/*
-	for(unsigned int i = 0; i < node->size(); i++)
-	{
-		float xPos = agk::WorldToScreenX(node->at(i).getX());
-		float yPos = agk::WorldToScreenY(node->at(i).getY());
-
-		agk::DrawLine(xPos, yPos, xPos, yPos, 255, 0, 0);
-	}
-	
-
-	/*for(unsigned int i = 0; i < node->size(); i++) //Going thru all the path nodes
-	{
-		float xPos = node->at(i).getX();
-		float yPos = node->at(i).getY();
-
-		unsigned int linkAmount = node->at(i).getLinkAmount(); //Getting the amount of link
-		for(unsigned int n = 0; n < linkAmount; n++) //Going through those links
-		{
-			int linkID = node->at(i).getLinkID(n); //Getting the ID of the link
-
-			if(linkID != -1)
-			{
-				//Finding that link
-				PathNode* linkNode = findNodeById(linkID);
-
-				//agk::DrawLine(agk::WorldToScreenX(xPos), agk::WorldToScreenY(yPos), agk::WorldToScreenX(linkNode->getX()), agk::WorldToScreenY(linkNode->getY()), 255, 0, 0);
-			}
-		}
-	}
-
-	//Going through all the node links
-	for(unsigned int i = 0; i < nodeLinks->size(); i++)
-	{
-		//Getting the ID of the nodes
-		int nodeID1 = nodeLinks->at(i).getNode(0);
-		int nodeID2 = nodeLinks->at(i).getNode(1);
-
-		PathNode* node1 = findNodeById(nodeID1);
-		PathNode* node2 = findNodeById(nodeID2);
-
-		float x1 = agk::WorldToScreenX(node1->getX());
-		float y1 = agk::WorldToScreenY(node1->getY());
-		float x2 = agk::WorldToScreenX(node2->getX());
-		float y2 = agk::WorldToScreenY(node2->getY());
-
-		int r = 255;
-		int g = 0;
-		int b = 0;
-
-		if(nodeLinks->at(i).getType() == 1)
-		{
-			r = 0;
-			g = 0;
-			b = 255;
-		}
-		agk::DrawLine(x1, y1, x2, y2, r, g, b);
-	}
-}
 PathNode* World::findNodeById(int ID)
 {
-	for(unsigned int i = 0; i < node->size(); i++)
+	for(unsigned int i = 0; i < nodes->size(); i++)
 	{
-		if(node->at(i).getID() == ID)
+		if(nodes->at(i).getVecID() == ID)
 		{
-			return &node->at(i);
+			return &nodes->at(i);
 		}
 	}
 
 	return NULL;
 }
-PathNode* World::findNodeBySlot(unsigned int slot)
+void World::displayNodes()
 {
-	if(slot >= 0 && slot < node->size())
+	for(unsigned int i = 0; i < links->size(); i++)
 	{
-		return &node->at(slot);
-	}
-	else
-	{
-		return NULL;
-	}
-}
+		//Getting the nodes connected to the link
+		PathNode* node0 = findNodeById(links->at(i).getNodeID(0));
+		PathNode* node1 = findNodeById(links->at(i).getNodeID(1));
 
-unsigned int World::getNodeAmount()
-{
-	return node->size();
-}
-
-NodeLink* World::getClosestLink(float x, float y)
-{
-	/*
-	float xOrigin = x;
-	float yOrigin = y;
-
-	float lowestDist = 100000000;
-
-	NodeLink closestLink;
-	closestLink.setNode(0, -1); //node[0] = -1;
-	closestLink.setNode(1, -1); //node[1] = -1;
-
-	unsigned int nodeAmount = this->getNodeAmount();
-
-	//Going through all the nodes
-	for(unsigned int i = 0; i < nodeAmount; i++)
-	{
-		PathNode* node = this->findNodeById(i);
-
-		float xPos = node->getX();
-		float yPos = node->getY();
-
-		//Going thru all of the links
-		for(unsigned int n = 0; n < node->getLinkAmount(); n++)
+		if(node0 != NULL && node1 != NULL)
 		{
-			//Getting the second node
-			PathNode* linkNode = this->findNodeById( node->getLinkID(n) );
-			
-			//Calculating a function for the angle of the line
-			float xDiff = linkNode->getX() - xPos;
-			float yDiff = linkNode->getY() - yPos;
+			float x1 = agk::WorldToScreenX(node0->getX());
+			float x2 = agk::WorldToScreenX(node1->getX());
+			float y1 = agk::WorldToScreenY(node0->getY());
+			float y2 = agk::WorldToScreenY(node1->getY());
 
-			float kVal = yDiff / xDiff;
-			
-			//Calculating lots of points of the line
-			for(float xChk = 0; xChk < xDiff; xChk += 1.0f)
-			{
-				float yChk = xChk * kVal; //Calculating the y cordinate of 
-
-				float xPosChk = xChk + xPos;
-				float yPosChk = yChk + yPos;
-
-				//Calculating the distance between the NPC and the point
-				float NPCDistX = xPosChk - xOrigin;
-				float NPCDistY = yPosChk - yOrigin;
-				float NPCDist = sqrt(pow(NPCDistX, 2) + pow(NPCDistY, 2));
-				
-				if(NPCDist < lowestDist)
-				{
-					//Saving the new closest link
-					lowestDist = NPCDist;
-
-					closestLink.setNode(0, node->getID()); // node[0] = node->getID();
-					closestLink.setNode(1, linkNode->getID()); //node[1] = linkNode->getID();
-				}
-			}
+			agk::DrawLine(x1, y1, x2, y2, 255, 0, 0);
 		}
 	}
-
-	if(lowestDist > 2) //If no suitable node was found
-	{
-		closestLink.setNode(0, -1); //node[0] = -1;
-		closestLink.setNode(1, -1); //node[1] = -1;
-	}
-	
-	//agk::Print(lowestDist);
-	
-	float lowestDist = 222222.0f;
-	NodeLink* closestLink;
-	for(unsigned int i = 0; i < nodeLinks->size(); i++)
-	{
-		PathNode* cNodes[2];
-		cNodes[0] = findNodeById( nodeLinks->at(i).getNode(0) );
-		cNodes[1] = findNodeById( nodeLinks->at(i).getNode(1) );
-
-		//Making sure both nodes exist
-		if(cNodes[0] != NULL && cNodes[1] != NULL)
-		{
-			//Calculating the k-value of the line between the nodes
-			float xDiff = cNodes[1]->getX() - cNodes[0]->getX();
-			float yDiff = cNodes[1]->getY() - cNodes[0]->getY();
-			
-			float kVal = yDiff/xDiff;
-			
-			for(float chk = 0; chk < xDiff; chk += 0.5f)
-			{
-				float xChk = cNodes[1]->getX() + chk;
-				float yChk = cNodes[1]->getY() + chk*kVal;
-
-				//Calculating the distance between the point and the location passed to the function
-				float xDist = xChk - x;
-				float yDist = yChk - y;
-
-				float totDist = sqrt(pow(xDist, 2) + pow(yDist, 2));
-
-				if(totDist < lowestDist) //If this point is closer
-				{
-					lowestDist = totDist;
-
-					closestLink = &nodeLinks->at(i);
-				}
-			}
-		}
-	}
-
-	return closestLink;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////
-void PathNode::create(int ID, float x, float y)
-{
-	this->ID = ID;
-	this->x = x;
-	this->y = y;
-
-	this->linkIDs = new std::vector< int >;
-}
-
-void PathNode::addLink(int ID)
-{
-	linkIDs->push_back(ID);
-}
-
-void PathNode::setPos(float x, float y)
+/////////////////////////////////////////////////////////
+//						Nodes
+/////////////////////////////////////////////////////////
+void PathNode::create(int vecID, float x, float y)
 {
 	this->x = x;
 	this->y = y;
+	this->vecID = vecID;
 }
 
-int PathNode::getID()
+int PathNode::getVecID()
 {
-	return ID;
+	return vecID;
 }
 float PathNode::getX()
 {
@@ -1305,65 +1242,19 @@ float PathNode::getY()
 {
 	return y;
 }
-unsigned int PathNode::getLinkAmount()
-{
-	return this->linkIDs->size();
-}
-int PathNode::getLinkID(unsigned int slot)
-{
-	return 0;
-}
 
-//////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////
-
-void NodeLink::setNode(int index, int ID)
+/////////////////////////////////////////////////////////
+//						Links
+/////////////////////////////////////////////////////////
+void PathLink::create(int vecID, int node0, int node1, int type)
 {
-	node[index] = ID;
-}
-void NodeLink::setType(int type)
-{
+	this->vecID = vecID;
+	nodes[0] = node0;
+	nodes[1] = node1;
 	this->type = type;
 }
-void NodeLink::setID(int ID)
-{
-	this->ID = ID;
-}
 
-int NodeLink::getNode(int index)
+int PathLink::getNodeID(int index)
 {
-	return node[index];
+	return nodes[index];
 }
-int NodeLink::getID()
-{
-	return ID;
-}
-int NodeLink::getType()
-{
-	return type;
-}
-
-bool NodeLink::isBadLink()
-{
-	//CHecking if one of the nodes has not been set
-	if(node[0] == -1 || node[1] == -1)
-	{
-		return true;
-	}
-	else return false;
-}
-bool NodeLink::compareTo(NodeLink link)
-{
-	if( node[0] == link.getNode(0) && node[1] == link.getNode(1) )
-	{
-		return true;
-	}
-	else if(node[1] == link.getNode(0) && node[0] == link.getNode(1))
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}*/

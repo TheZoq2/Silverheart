@@ -8,6 +8,7 @@
 #include "Player.h"
 //#include "World.h"
 #include "NPC.h"
+#include "UI.h"
 
 typedef int (*lua_CFunction) (lua_State *L);
 
@@ -29,6 +30,9 @@ typedef int (*lua_CFunction) (lua_State *L);
 
 	extern NPCGroup* l_defaultNPCgroup;
 	extern int LUA_loadNPC(lua_State* L);
+	extern NPC* l_lastNPC;
+
+	extern UI* l_defaultUI;
 #endif
 
 class LuaHandler
@@ -43,4 +47,6 @@ public:
 	static void printError(lua_State* L, char* msg);
 
 	static void runScript(std::string name);
-};
+
+	static void runFunction(std::string script, std::string function);
+};;

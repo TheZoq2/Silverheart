@@ -97,82 +97,6 @@ void Player::setPosition(float x, float y)
 
 void Player::update()
 {
-	/*bool onGround = checkOnGround(); //Checking if the player is on the ground right now
-
-	//Making sure the player does not fall over
-	agk::SetSpriteAngle(SID, 0);
-
-	x = agk::GetSpriteXByOffset(SID);
-	y = agk::GetSpriteYByOffset(SID);
-
-	float jumpImpulse = jumpHeight * 2;
-
-	//Jumping
-	if(Input::up())
-	{
-		if(onGround == true)
-		{
-			if(lastJump + 0.1 < globaltime)
-			{
-				//Applying some impulse
-				agk::SetSpritePhysicsImpulse(SID, x, y, 0, -jumpImpulse);
-
-				lastJump = globaltime;
-			}
-		}
-	}
-
-	float maxSpeed = speed;
-	float maxSpeedAir = maxSpeed * 0.3;
-	float moveForce = 600;
-
-	float cMaxSpeed = maxSpeed; //The current max speed
-	if(onGround == false)
-	{
-		cMaxSpeed = maxSpeedAir;
-	}
-
-	bool moving = false;
-	float targetSpeed = 0;
-	if(Input::left())
-	{
-		moving = true;
-
-		agk::SetSpritePhysicsForce(SID, x, y, -moveForce, 0);
-	}
-	if(Input::right())
-	{
-		moving = true;
-
-		agk::SetSpritePhysicsForce(SID, x, y, moveForce, 0);
-	}
-
-	//Checkiong if the speed is to high
-	if(agk::GetSpritePhysicsVelocityX(SID) > maxSpeed)
-	{
-		agk::SetSpritePhysicsVelocity(SID, maxSpeed, agk::GetSpritePhysicsVelocityY(SID));
-	}
-	if(agk::GetSpritePhysicsVelocityX(SID) < -maxSpeed)
-	{
-		agk::SetSpritePhysicsVelocity(SID, -maxSpeed, agk::GetSpritePhysicsVelocityY(SID));
-	}*/
-
-	/*float cSpeed = agk::GetSpritePhysicsVelocityX(SID);
-	float speedDiff = targetSpeed - cSpeed;
-	
-	//Calculating the amount of force required to get the player to that speed a=F/m
-	float force = targetSpeed / speedMod * agk::GetSpritePhysicsMass(SID);
-	
-	agk::Print(targetSpeed);
-
-	agk::SetSpritePhysicsForce(SID, x, y, force, 0);
-	*/
-
-	//agk::SetSpritePhysicsVelocity(SID, targetSpeed, agk::GetSpritePhysicsVelocityY(SID));
-	
-	//////////////////////////////////////////////////////////////////////////////////
-
-
 	//Movement
 
 	chr.update();
@@ -209,14 +133,6 @@ void Player::update()
 	cameraY = y - (agk::GetVirtualHeight() / agk::GetViewZoom() / 2);
 
 	agk::SetViewOffset(cameraX, cameraY);
-
-
-	/////////////////////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////////////////////
-	/*if(agk::GetSkeleton2DExists(skeleton))
-	{
-		agk::SetSkeleton2DPosition(skeleton, x, y);
-	}*/
 }
 void Player::updateWeapon(ProjectileGroup* projGroup)
 {
@@ -236,9 +152,9 @@ void Player::updateWeapon(ProjectileGroup* projGroup)
 
 void Player::activation()
 {
-	float lowestDist = 6;
+	float lowestDist = 90;
 	bool partFound = false;
-	Part* closestPart;
+	Part* closestPart = NULL;
 	int closestPartID;
 
 	//Looping thru all of the parts
@@ -253,7 +169,7 @@ void Player::activation()
 			float distY = partY - y;
 			float dist = agk::Sqrt(distX * distX + distY * distY);
 
-			int useRange = 6;
+			int useRange = 90;
 			if(dist < useRange) //Checking if the part is within reach
 			{
 				partFound = true;
@@ -269,7 +185,7 @@ void Player::activation()
 		}
 	}
 
-	if(partFound == true)
+	if(partFound == true && closestPart != NULL)
 	{
 		//Positioning the activation text
 		agk::SetTextVisible(activateText, 1);

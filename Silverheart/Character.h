@@ -18,12 +18,15 @@ public:
 
 	bool checkOnGround(World* world);
 
+	void setSprite(int SID);
 	void setPosition(float x, float y);
 	void setImpulse(float centerX, float centerY, float iX, float iY);
 
 	float getX();
 	float getY();
 private:
+	int SID;
+
 	int body;
 	int leg;
 	int sensor;

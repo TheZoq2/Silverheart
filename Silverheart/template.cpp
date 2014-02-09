@@ -51,6 +51,8 @@ void app::Begin(void)
 	//Registering LUA functions
 	l_defaultPlr = &player;
 	l_defaultWorld = &world;
+	l_defaultNPCgroup = &npcGroup;
+	l_defaultUI = &mainUI;
 
 	//Physics setup
 	physScale = 0.01;
@@ -81,7 +83,7 @@ void app::Loop (void)
 
 		world.update(player.getX(), player.getY());
 
-		IngameMenu::update();
+		//IngameMenu::update();
 
 		npcGroup.update(&world);
 		npcGroup.updateChars(&npcGroup, &player);
@@ -98,11 +100,28 @@ void app::Loop (void)
 		//LuaHandler::runScript("scripts/test.lua");
 		//agk::SetViewZoom(20);
 
-		uString cWorldName;
+		std::string cWorldName;
 		//cWorldName.SetStr("levels/lab1");
-		cWorldName.SetStr("levels/flying");
+		cWorldName = "levels/flying";
 
-		world.load(cWorldName);
+		world.load(cWorldName.data());
+	
+		//Checking if the level has a script that should be run
+		std::string oldDir = agk::GetCurrentDir();
+		agk::SetCurrentDir("");
+		
+		std::string levelScript = "scripts/";
+		levelScript.append(cWorldName);
+		levelScript.append("/onload.lua");
+		//levelScript = "scripts/firstspawn.lua";
+
+		if(agk::GetFileExists(levelScript.data()))
+		{
+			LuaHandler::runScript(levelScript);
+		}
+
+		agk::SetCurrentDir(oldDir.data());
+
 		//world.loadMapAsBg("levels/bgtest1");
 		world.loadBaseMedia();
 		world.setTime(800);

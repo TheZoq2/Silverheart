@@ -39,6 +39,7 @@ public:
 	float getFeetY();
 	float getFeetX();
 private:
+	int SID;
 	int colSID;
 	int colimgID;
 
@@ -57,7 +58,6 @@ private:
 	float cSpeed;
 };
 
-
 class Waypoint
 {
 public:
@@ -68,6 +68,18 @@ public:
 private:
 	float x;
 	float y;
+};
+class Flag
+{
+public:
+	void create(std::string name, int value);
+
+	std::string getName();
+	int getValue();
+	void setValue(int);
+private:
+	std::string name;
+	int value;
 };
 
 class NPC
@@ -84,7 +96,13 @@ public:
 	void setPosition(float x, float y);
 
 	void setGoal(float goalX, float goalY);
+
+	float getX();
+	float getY();
 	
+	void addFlag(std::string name, int value);
+	Flag* getFlag(std::string name);
+
 	//bool findPathToGoal(World* world);
 
 	//NodeLink findClosestNodes(World* world);
@@ -95,7 +113,7 @@ private:
 
 	std::vector< uString >* formal;
 
-	OldCharacter chr;
+	Character chr;
 
 	float x;
 	float y;
@@ -108,6 +126,10 @@ private:
 	float goalY;
 
 	bool hasGoal;
+
+	std::string updateScript;
+
+	std::vector< Flag > flags;
 };
 
 class listElement
@@ -132,6 +154,8 @@ public:
 
 	void addNPCFromFile(uString file);
 	void addNPCFromFile(uString file, float x, float y);
+
+	NPC* getLastNPC();
 private:
 	std::vector< NPC >* npc;
 };

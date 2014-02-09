@@ -2,6 +2,8 @@
 
 #include "agk.h"
 
+#include <vector>
+
 class DataReader
 {
 public:
@@ -12,5 +14,7 @@ public:
 	static uString getValue(uString line);
 	static uString getValue(uString line, int pos);
 	static int getValueAmount(uString line);
+
+	static std::vector< std::string > getArray(std::string data);
 };
 
