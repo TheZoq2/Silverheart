@@ -1,12 +1,16 @@
 function quitDialogue()
 	removeWindow("DialogWindow");
+	setNPCFlagValue(talkingTo, "hasUI", 0)
+
+	setNPCFlagValue(talkingTo, "continueConv", 0)
 
 	talkingTo = nil;
 end
 function reloadDialogue()
+	removeWindow("DialogWindow");
 	setNPCFlagValue(talkingTo, "hasUI", 0)
 
-		quitDialogue()
+	setNPCFlagValue(talkingTo, "continueConv", 1)
 end
 
 function greet()
@@ -35,4 +39,13 @@ function instantHate()
 
 		reloadDialogue()
 	end
+end
+
+function bribe()
+	part = getPartByName("door")
+	target = getPartByName("door1Target")
+
+	speed = 0.15 -- The speed that the part should move at
+
+	movePartToPart(part, target, speed)
 end

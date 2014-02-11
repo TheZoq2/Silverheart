@@ -156,6 +156,7 @@ void Player::activation()
 	bool partFound = false;
 	Part* closestPart = NULL;
 	int closestPartID;
+	int partDist = lowestDist + 1;
 
 	//Looping thru all of the parts
 	for(int i = 0; i < world->getPartAmount(); i++)
@@ -177,6 +178,7 @@ void Player::activation()
 				if(dist < lowestDist) //CHecking if this is the closest part found
 				{
 					lowestDist = dist; //Changing the lowest distance
+					partDist = dist;
 
 					closestPart = world->getPartFromID(i); //Changing the lowest part we have found
 					closestPartID = i;
@@ -185,45 +187,103 @@ void Player::activation()
 		}
 	}
 
-	if(partFound == true && closestPart != NULL)
+	bool npcFound = false;
+	NPC* closestNPC = NULL;
+	int npcDist = lowestDist + 1;
+	
+	//Looping thru all the NPCs (Using the)
+	for(unsigned int i = 0; i < defaultNPCGroup->getNPCAmount(); i++)
 	{
-		//Positioning the activation text
-		agk::SetTextVisible(activateText, 1);
-		agk::SetTextPosition(activateText, agk::WorldToScreenX( closestPart->getX() ), agk::WorldToScreenY( closestPart->getY() ));
+		NPC* npc = defaultNPCGroup->getNPC(i);
 
-		//Changing the text to the use text of the part
-		uString fText;
-		fText.SetStr(i_activateName);
-		fText.Append(") ");
-		fText.Append(closestPart->getUseMsg());
-
-		agk::SetTextString(activateText, fText);
-
-		//Adding the background
-		agk::SetSpritePosition(activateSprite, agk::WorldToScreenX(closestPart->getX()) -5.0f, agk::WorldToScreenY(closestPart->getY()) - 2.5f);
-		agk::SetSpriteVisible(activateSprite, 1);
-		agk::SetSpriteScale(activateSprite, agk::GetTextTotalWidth(activateText) + 10, agk::GetTextTotalHeight(activateText) + 5);
-
-		//Checking if the part is activated
-		if(Input::activate() == true)
+		if(npc != NULL)
 		{
-			//Getting the script of the item
-			uString actScript;
-			actScript.SetStr("scripts/");
-			actScript.Append(closestPart->getActScript());
+			float npcX = npc->getX();
+			float npcY = npc->getY();
 
-			//Saving the part that was activated last for use with labels in lua
-			world->setLastActive(closestPartID);
+			float distX = npcX - x;
+			float distY = npcY - y;
+			float dist = agk::Sqrt(distX * distX + distY * distY);
 
-			//Checking if this is a lua script or an old script
-			if(actScript.FindStr(".lua") != -1)
+			if(dist < lowestDist)
 			{
-				LuaHandler::runScript(actScript.GetStr());
+				npcFound = true;
+
+				lowestDist = dist;
+				npcDist = dist;
+
+				closestNPC = npc;
 			}
-			else
+		}
+	}
+
+	if((partFound == true && closestPart != NULL) || (npcFound == true && closestNPC != NULL))
+	{
+		if(partDist < npcDist)
+		{
+			//Positioning the activation text
+			agk::SetTextVisible(activateText, 1);
+			agk::SetTextPosition(activateText, agk::WorldToScreenX( closestPart->getX() ), agk::WorldToScreenY( closestPart->getY() ));
+
+			//Changing the text to the use text of the part
+			uString fText;
+			fText.SetStr(i_activateName);
+			fText.Append(") ");
+			fText.Append(closestPart->getUseMsg());
+
+			agk::SetTextString(activateText, fText);
+
+			//Adding the background
+			agk::SetSpritePosition(activateSprite, agk::WorldToScreenX(closestPart->getX()) -5.0f, agk::WorldToScreenY(closestPart->getY()) - 2.5f);
+			agk::SetSpriteVisible(activateSprite, 1);
+			agk::SetSpriteScale(activateSprite, agk::GetTextTotalWidth(activateText) + 10, agk::GetTextTotalHeight(activateText) + 5);
+
+			//Checking if the part is activated
+			if(Input::activate() == true)
 			{
-				//Starting the script
-				Script::run(actScript, closestPart, world, this);
+				//Getting the script of the item
+				uString actScript;
+				actScript.SetStr("scripts/");
+				actScript.Append(closestPart->getActScript());
+
+				//Saving the part that was activated last for use with labels in lua
+				world->setLastActive(closestPartID);
+
+				//Checking if this is a lua script or an old script
+				if(actScript.FindStr(".lua") != -1)
+				{
+					LuaHandler::runScript(actScript.GetStr());
+				}
+				else
+				{
+					//Starting the script
+					Script::run(actScript, closestPart, world, this);
+				}
+			}
+		}
+		else
+		{
+			//Positioning the activation text
+			agk::SetTextVisible(activateText, 1);
+			agk::SetTextPosition(activateText, agk::WorldToScreenX( closestNPC->getX() ), agk::WorldToScreenY( closestNPC->getY() ));
+
+			//Changing the text to the use text of the part
+			uString fText;
+			fText.SetStr(i_activateName);
+			fText.Append(") ");
+			fText.Append("talk");
+
+			agk::SetTextString(activateText, fText);
+
+			//Adding the background
+			agk::SetSpritePosition(activateSprite, agk::WorldToScreenX(closestNPC->getX()) -5.0f, agk::WorldToScreenY(closestNPC->getY()) - 2.5f);
+			agk::SetSpriteVisible(activateSprite, 1);
+			agk::SetSpriteScale(activateSprite, agk::GetTextTotalWidth(activateText) + 10, agk::GetTextTotalHeight(activateText) + 5);
+
+			//Checking if the part is activated
+			if(Input::activate() == true)
+			{
+				closestNPC->startConversation();
 			}
 		}
 	}

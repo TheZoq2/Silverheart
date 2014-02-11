@@ -1,4 +1,4 @@
-dofile("scripts/Characters/farmer/dialogue.lua");
+--dofile("scripts/Characters/farmer/dialogue.lua");
 
 plrX, plrY = getPlayerPosition();
 
@@ -19,6 +19,9 @@ end
 if(getNPCFlagExists(NPC, "hasUI") == false) then
 	addNPCFlag(NPC, "hasUI", 0)
 end
+if(getNPCFlagExists(NPC, "continueConv") == false) then
+	addNPCFlag(NPC, "continueConv", 0)
+end
 
 
 mainState = getNPCFlagValue(NPC, "mainState") == 0
@@ -29,17 +32,6 @@ if mainState == 0 then -- The NPC has nothing to do
 	end
 end
 
-if(getNPCFlagValue(NPC, "hasUI") == 0) then
-	if(getWindowExists("DialogWindow") == false) then
-		printToConsole("Creating new window");
-
-		addUIWindow("DialogWindow", "1x1.png", 100, 250, 300, 100)
-		setUIWindowColor("DialogWindow", 100, 100, 100, 150)
-		addSimpleListToWindow("DialogWindow", "diaList", 5, 5, 240, 90, "Header")
-		setListClickable("DialogWindow", "diaList", true)
-
-		addDialogueToList("DialogWindow", "diaList", NPC);
-
-		setNPCFlagValue(NPC, "hasUI", 1)
-	end
+if(getNPCFlagValue(NPC, "continueConv") == 1) then
+	dofile("scripts/characters/farmer/dialogue.lua")
 end

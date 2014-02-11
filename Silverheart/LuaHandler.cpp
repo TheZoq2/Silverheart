@@ -176,6 +176,15 @@ int LUA_loadNewLevel(lua_State* L)
 
 	return 0;*/
 }
+int LUA_getPartByName(lua_State* L)
+{
+	std::string name = lua_tostring(L, 1);
+	Part* part = l_defaultWorld->getPartFromName(name.data());
+
+	lua_pushlightuserdata(L, part);
+
+	return 0;
+}
 
 //NPCs
 NPCGroup* l_defaultNPCgroup;
@@ -419,6 +428,7 @@ void LuaHandler::setupLua()
 	registerFunction("getLastActivePart", LUA_getLastActivePart);
 	registerFunction("getLabelValue", LUA_getPartLabelValue);
 	registerFunction("movePartToPart", LUA_movePartToPart);
+	registerFunction("getPartByName", LUA_getPartByName);
 
 	registerFunction("createNPC", LUA_loadNPC);
 	registerFunction("getCurrentNPC", LUA_getCurrentNPC);

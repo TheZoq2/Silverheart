@@ -18,6 +18,10 @@ function addDialogueToList(windowName, listName, NPC)
 
 			addOptionToList(windowName, listName, "* Punch *", "functions.lua", "instantHate")
 		end
+
+		if(getNPCFlagValue(NPC, "plrRelation") > 50) then
+			addOptionToList(windowName, listName, "Can we make a 'transaction'","functions.lua", "bribe")
+		end
 	end
 
 	addOptionToList(windowName, listName, "Goodbye", "functions.lua", "quitDialogue");
@@ -27,4 +31,22 @@ function addOptionToList(windowName, listName, option, script, func)
 	addToSimpleList(windowName, listName, option);
 	listItem = getLastListItem(windowName, listName)
 	setListItemOnClick(listItem, "scripts/Characters/farmer/" .. script, func);
+end
+
+---------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------
+if(getNPCFlagValue(NPC, "hasUI") == 0) then
+	if(getWindowExists("DialogWindow") == false) then
+		printToConsole("Creating new window");
+
+		addUIWindow("DialogWindow", "1x1.png", 100, 250, 300, 100)
+		setUIWindowColor("DialogWindow", 100, 100, 100, 150)
+		addSimpleListToWindow("DialogWindow", "diaList", 5, 5, 240, 90, "Header")
+		setListClickable("DialogWindow", "diaList", true)
+
+		addDialogueToList("DialogWindow", "diaList", NPC);
+
+		setNPCFlagValue(NPC, "hasUI", 1)
+	end
 end

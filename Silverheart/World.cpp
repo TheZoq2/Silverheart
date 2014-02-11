@@ -147,7 +147,11 @@ void World::load(uString filename)
 				Part tempPart;
 
 				//Checking if the sprite exists
-				if(agk::GetFileExists(imgName.data()))
+				if(agk::GetFileExists(imgName.data()) == 0)
+				{
+					tempPart.cloneSprite(1);
+				}
+				else
 				{
 					int cloneSprite = checkForWS(imgName.data());
 
@@ -161,22 +165,24 @@ void World::load(uString filename)
 					{
 						tempPart.cloneSprite(wS->at(cloneSprite).SID);
 					}
-
-					tempPart.setScale(scaleX, scaleY);
-					tempPart.setPosition(xPos, yPos);
-					tempPart.setAngle(angle);
-					tempPart.setDepth(depth);
-					tempPart.setPhysState(physState);
-					tempPart.setVisible(visible);
-
-					tempPart.setName(name.data());
-
-					tempPart.setActScript(useScript.data());
-					tempPart.setUsable(usable);
-					tempPart.setUseMsg(useMsg.data());
-
-					this->part->push_back(tempPart);
 				}
+					
+
+				tempPart.setScale(scaleX, scaleY);
+				tempPart.setPosition(xPos, yPos);
+				tempPart.setAngle(angle);
+				tempPart.setDepth(depth);
+				tempPart.setPhysState(physState);
+				tempPart.setVisible(visible);
+
+				tempPart.setName(name.data());
+
+				tempPart.setActScript(useScript.data());
+				tempPart.setUsable(usable);
+				tempPart.setUseMsg(useMsg.data());
+
+				this->part->push_back(tempPart);
+				
 			}
 
 		}

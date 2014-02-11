@@ -1,0 +1,1 @@
+NPC = createNPC("Farmer", "gSpawn1")

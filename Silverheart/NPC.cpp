@@ -10,6 +10,8 @@ int NPC_passiveState = 1;
 int NPC_walkingState = 2;
 int NPC_hasGoalState = 3;
 
+NPCGroup* defaultNPCGroup;
+
 NPC::NPC(void)
 {
 }
@@ -72,6 +74,11 @@ void NPC::updateChars(std::vector< NPC >* npc, Player* player)
 	}
 }
 
+void NPC::startConversation()
+{
+	LuaHandler::runScript(conversationScript);
+}
+
 void NPC::createFromName(uString name)
 {
 	setup();
@@ -130,9 +137,9 @@ void NPC::createFromName(uString name)
 						this->formal->push_back(value);
 					}
 				}
-				else if(type.CompareTo("Dialog") == 0)
+				else if(type.CompareTo("Dialogue") == 0)
 				{
-
+					conversationScript = DataReader::getValue(p);
 				}
 				else if(type.CompareTo("ColSprite") == 0)
 				{
@@ -413,6 +420,19 @@ NPC* NPCGroup::getLastNPC()
 	if(npc->size() > 0)
 	{
 		return &npc->back();
+	}
+
+	return NULL;
+}
+unsigned int NPCGroup::getNPCAmount()
+{
+	return npc->size();
+}
+NPC* NPCGroup::getNPC(unsigned int index)
+{
+	if(index >= 0 && index < npc->size())
+	{
+		return &npc->at(index);
 	}
 
 	return NULL;

@@ -54,6 +54,8 @@ void app::Begin(void)
 	l_defaultNPCgroup = &npcGroup;
 	l_defaultUI = &mainUI;
 
+	defaultNPCGroup = &npcGroup;
+
 	//Physics setup
 	physScale = 0.01;
 	agk::SetPhysicsScale(physScale);
@@ -102,7 +104,7 @@ void app::Loop (void)
 
 		std::string cWorldName;
 		//cWorldName.SetStr("levels/lab1");
-		cWorldName = "levels/flying";
+		cWorldName = "levels/NPCTest";
 
 		world.load(cWorldName.data());
 	

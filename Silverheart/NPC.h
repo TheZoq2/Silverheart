@@ -93,6 +93,8 @@ public:
 	void updateChars(std::vector< NPC >* npc, Player* player);
 	void createFromName(uString name);
 
+	void startConversation();
+
 	void setPosition(float x, float y);
 
 	void setGoal(float goalX, float goalY);
@@ -128,6 +130,7 @@ private:
 	bool hasGoal;
 
 	std::string updateScript;
+	std::string conversationScript;
 
 	std::vector< Flag > flags;
 };
@@ -156,7 +159,11 @@ public:
 	void addNPCFromFile(uString file, float x, float y);
 
 	NPC* getLastNPC();
+
+	unsigned int getNPCAmount();
+	NPC* getNPC(unsigned int index);
 private:
 	std::vector< NPC >* npc;
 };
 
+extern NPCGroup* defaultNPCGroup;
