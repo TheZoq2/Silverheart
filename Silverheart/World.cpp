@@ -228,11 +228,11 @@ void World::load(uString filename)
 							}
 							if(dataType.compare("x") == 0)
 							{
-								x = atof(dataValue.data());
+								x = (float) atof(dataValue.data());
 							}
 							if(dataType.compare("y") == 0)
 							{
-								y = atof(dataValue.data());
+								y = (float) atof(dataValue.data());
 							}
 						}
 
@@ -251,8 +251,8 @@ void World::load(uString filename)
 						std::vector<std::string> variables = zString::split(arrays.at(i), ",");
 
 						int vecID;
-						float node0;
-						float node1;
+						int node0;
+						int node1;
 						int type;
 
 						for(unsigned int n = 0; n < variables.size(); n++)
@@ -513,7 +513,7 @@ void World::updateBG(float playerX, float playerY)
 		if(rand() % 1000 == 1)
 		{
 			//The overcast is done changing, select a new target
-			overcastTarget = agk::Random(0, 100) / 100.0f * 0.75 + 0.25;
+			overcastTarget = agk::Random(0, 100) / 100.0f * 0.75f + 0.25f;
 		}
 	}
 
@@ -935,7 +935,7 @@ Part* World::getPartFromName(uString name) //This function goes thru all the par
 }
 Part* World::getPartFromID(int partID)
 {
-	if(partID >= 0 && partID < part->size())
+	if((unsigned) partID >= 0 && (unsigned)partID < part->size())
 	{
 		return &part->at(partID);
 	}

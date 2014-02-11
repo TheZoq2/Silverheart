@@ -57,7 +57,7 @@ void app::Begin(void)
 	defaultNPCGroup = &npcGroup;
 
 	//Physics setup
-	physScale = 0.01;
+	physScale = 0.01f;
 	agk::SetPhysicsScale(physScale);
 
 	int testText = agk::CreateText("Hello world");

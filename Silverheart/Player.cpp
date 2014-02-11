@@ -156,7 +156,7 @@ void Player::activation()
 	bool partFound = false;
 	Part* closestPart = NULL;
 	int closestPartID;
-	int partDist = lowestDist + 1;
+	float partDist = lowestDist + 1;
 
 	//Looping thru all of the parts
 	for(int i = 0; i < world->getPartAmount(); i++)
@@ -189,7 +189,7 @@ void Player::activation()
 
 	bool npcFound = false;
 	NPC* closestNPC = NULL;
-	int npcDist = lowestDist + 1;
+	float npcDist = lowestDist + 1;
 	
 	//Looping thru all the NPCs (Using the)
 	for(unsigned int i = 0; i < defaultNPCGroup->getNPCAmount(); i++)

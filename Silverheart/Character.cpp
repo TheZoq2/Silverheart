@@ -20,7 +20,7 @@ void Character::create(float sizeX, float sizeY)
 	agk::SetSpritePhysicsCanRotate(body, 0);
 
 	leg = agk::CloneSprite(1);
-	agk::SetSpriteScale(leg, sizeX / 1.4, sizeX / 1.4);
+	agk::SetSpriteScale(leg, sizeX / 1.4f, sizeX / 1.4f);
 	agk::SetSpritePhysicsOn(leg, 2);
 	agk::SetSpritePhysicsMass(leg, 0);
 	//agk::SetSpritePhysicsFriction(leg, 0.1);

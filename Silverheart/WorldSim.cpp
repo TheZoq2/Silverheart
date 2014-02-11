@@ -60,19 +60,19 @@ void WorldSim::load()
 			{
 				std::string value = DataReader::getValue(line).GetStr();
 
-				tempReg.setPopulation(atoi(value.data()));
+				tempReg.setPopulation((float)atof(value.data()));
 			}
 			if(strcmp(dataType.data(), "Wealth") == 0)
 			{
 				std::string value = DataReader::getValue(line).GetStr();
 
-				tempReg.setWealth(atoi(value.data()));
+				tempReg.setWealth((float)atof(value.data()));
 			}
 			if(strcmp(dataType.data(), "Food") == 0)
 			{
 				std::string value = DataReader::getValue(line).GetStr();
 
-				float food = atof(value.data());
+				float food = (float)atof(value.data());
 				tempReg.setFood(food);
 			}
 
@@ -118,13 +118,13 @@ void WorldSim::load()
 			{
 				std::string valStr = DataReader::getValue(line).GetStr();
 
-				tempFaction.setTaxrate(atof(valStr.data()));
+				tempFaction.setTaxrate((float)atof(valStr.data()));
 			}
 			if(strcmp(dataType.data(), "Foodmod") == 0)
 			{
 				std::string valStr = DataReader::getValue(line).GetStr();
 
-				tempFaction.setFoodMod(atof(valStr.data()));
+				tempFaction.setFoodMod((float)atof(valStr.data()));
 			}
 			if(strcmp(dataType.data(), "Wealthmod") == 0)
 			{
