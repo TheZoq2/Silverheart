@@ -28,26 +28,26 @@ void GF::setupGlobals()
 	speedMod = 0;
 }
 
-uString GF::getPath(char originalPath[128])
+std::string GF::getPath(char originalPath[128])
 {
-	uString result;
+	std::string result;
 	
 	if(GF::quality == 1)
 	{
-		result.SetStr(sdPath);
-		result.Append(originalPath);
+		result = sdPath;
+		result.append(originalPath);
 	}
 
 	return result; //Returning the final path
 }
-uString GF::getPath(uString filename)
+std::string GF::getPath(std::string filename)
 {
-	uString result;
+	std::string result;
 
 	if(GF::quality == 1)
 	{
-		result.SetStr(sdPath);
-		result.Append(filename);
+		result = sdPath;
+		result.append(filename);
 	}
 
 	return result;

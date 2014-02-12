@@ -22,7 +22,7 @@
 class OldCharacter
 {
 public:
-	void create(uString colSprite);
+	void create(std::string colSprite);
 	void update(World* world);
 
 	bool checkOnGround(World* world);
@@ -91,7 +91,7 @@ public:
 	void setup();
 	void update(World* world);
 	void updateChars(std::vector< NPC >* npc, Player* player);
-	void createFromName(uString name);
+	void createFromName(std::string name);
 
 	void startConversation();
 
@@ -111,9 +111,9 @@ public:
 private:
 	bool exists;
 
-	uString name;
+	std::string name;
 
-	std::vector< uString >* formal;
+	std::vector< std::string >* formal;
 
 	Character chr;
 
@@ -155,8 +155,8 @@ public:
 	void update(World* world); //Main update loop for NPCs
 	void updateChars(NPCGroup* npcGroup, Player* player);
 
-	void addNPCFromFile(uString file);
-	void addNPCFromFile(uString file, float x, float y);
+	void addNPCFromFile(std::string file);
+	void addNPCFromFile(std::string file, float x, float y);
 
 	NPC* getLastNPC();
 

@@ -37,14 +37,14 @@ void Particle::update()
 	}
 }
 
-void Particle::addFromFile(int ID, uString filename, float x, float y)
+void Particle::addFromFile(int ID, std::string filename, float x, float y)
 {
-	uString filePath;
-	filePath.SetStr(p_location);
-	filePath.Append(filename);
+	std::string filePath;
+	filePath = p_location;
+	filePath.append(filename);
 
 	//Making sure the file exists
-	if(agk::GetFileExists(filePath))
+	if(agk::GetFileExists(filePath.data()))
 	{
 		//Setting default values for the particle
 		image = GF::getPath("1x1.png");
@@ -66,16 +66,16 @@ void Particle::addFromFile(int ID, uString filename, float x, float y)
 		std::vector< int >* frameB = new std::vector< int >; frameB->push_back(255);
 		std::vector< int >* frameA = new std::vector< int >; frameA->push_back(255);
 
-		int fileID = agk::OpenToRead(filePath);
+		int fileID = agk::OpenToRead(filePath.data());
 		while(agk::FileEOF(fileID) == 0)
 		{
 			//Reading the line
-			uString line;
-			line.SetStr(agk::ReadLine(fileID));
+			std::string line;
+			line = agk::ReadLine(fileID);
 
-			uString dataType = DataReader::getType(line);
+			std::string dataType = DataReader::getType(line);
 
-			if(dataType.CompareTo("Image") == 0)
+			if(dataType.compare("Image") == 0)
 			{
 				std::string imgName;
 				imgName = GF::getPath( DataReader::getValue(line) );
@@ -91,90 +91,90 @@ void Particle::addFromFile(int ID, uString filename, float x, float y)
 					DebugConsole::addC(" --- "); DebugConsole::addToLog(filePath);
 				}
 			}
-			if(dataType.CompareTo("Angle") == 0)
+			if(dataType.compare("Angle") == 0)
 			{
-				angle = float(atof(DataReader::getValue(line)));
+				angle = float(atof(DataReader::getValue(line).data()));
 			}
-			if(dataType.CompareTo("DirectionX") == 0)
+			if(dataType.compare("DirectionX") == 0)
 			{
-				dirX = float(atof(DataReader::getValue(line)));
+				dirX = float(atof(DataReader::getValue(line).data()));
 			}
-			if(dataType.CompareTo("DirectionY") == 0)
+			if(dataType.compare("DirectionY") == 0)
 			{
-				dirY = float(atof(DataReader::getValue(line)));
+				dirY = float(atof(DataReader::getValue(line).data()));
 			}
-			if(dataType.CompareTo("Frequency") == 0)
+			if(dataType.compare("Frequency") == 0)
 			{
-				frequency = float(atof(DataReader::getValue(line)));
+				frequency = float(atof(DataReader::getValue(line).data()));
 			}
-			if(dataType.CompareTo("Life") == 0)
+			if(dataType.compare("Life") == 0)
 			{
-				life = float(atof(DataReader::getValue(line)));
+				life = float(atof(DataReader::getValue(line).data()));
 			}
-			if(dataType.CompareTo("Size") == 0)
+			if(dataType.compare("Size") == 0)
 			{
-				size = float(atof(DataReader::getValue(line)));
+				size = float(atof(DataReader::getValue(line).data()));
 			}
-			if(dataType.CompareTo("startX") == 0)
+			if(dataType.compare("startX") == 0)
 			{
-				startX = float(atof(DataReader::getValue(line)));
+				startX = float(atof(DataReader::getValue(line).data()));
 			}
-			if(dataType.CompareTo("startY") == 0)
+			if(dataType.compare("startY") == 0)
 			{
-				startY = float(atof(DataReader::getValue(line)));
+				startY = float(atof(DataReader::getValue(line).data()));
 			}
-			if(dataType.CompareTo("Timeout") == 0)
+			if(dataType.compare("Timeout") == 0)
 			{
-				timeout = float(atof(DataReader::getValue(line)));
+				timeout = float(atof(DataReader::getValue(line).data()));
 			}
 
-			if(dataType.CompareTo("KeyframeT") == 0)
+			if(dataType.compare("KeyframeT") == 0)
 			{
 				int valueAmount = DataReader::getValueAmount(line); //Checking how many values there are
 				for(int i = 0; i < valueAmount; i++) //Going thru all of the values
 				{
-					float value = float(atof(DataReader::getValue(line, i)));
+					float value = float(atof(DataReader::getValue(line, i).data()));
 
 					//Saving the value
 					frameT->push_back(value);
 				}
 			}
-			if(dataType.CompareTo("KeyframeR") == 0)
+			if(dataType.compare("KeyframeR") == 0)
 			{
 				int valueAmount = DataReader::getValueAmount(line); //Checking how many values there are
 				for(int i = 0; i < valueAmount; i++)
 				{
-					int value = atoi(DataReader::getValue(line, i));
+					int value = atoi(DataReader::getValue(line, i).data());
 
 					frameR->push_back(value);
 				}
 			}
-			if(dataType.CompareTo("KeyframeG") == 0)
+			if(dataType.compare("KeyframeG") == 0)
 			{
 				int valueAmount = DataReader::getValueAmount(line); //Checking how many values there are
 				for(int i = 0; i < valueAmount; i++)
 				{
-					int value = atoi(DataReader::getValue(line, i));
+					int value = atoi(DataReader::getValue(line, i).data());
 
 					frameG->push_back(value);
 				}
 			}
-			if(dataType.CompareTo("KeyframeB") == 0)
+			if(dataType.compare("KeyframeB") == 0)
 			{
 				int valueAmount = DataReader::getValueAmount(line); //Checking how many values there are
 				for(int i = 0; i < valueAmount; i++)
 				{
-					int value = atoi(DataReader::getValue(line, i));
+					int value = atoi(DataReader::getValue(line, i).data());
 
 					frameB->push_back(value);
 				}
 			}
-			if(dataType.CompareTo("KeyframeA") == 0)
+			if(dataType.compare("KeyframeA") == 0)
 			{
 				int valueAmount = DataReader::getValueAmount(line); //Checking how many values there are
 				for(int i = 0; i < valueAmount; i++)
 				{
-					int value = atoi(DataReader::getValue(line, i));
+					int value = atoi(DataReader::getValue(line, i).data());
 
 					frameA->push_back(value);
 				}
@@ -480,7 +480,7 @@ void ParticleGroup::update()
 	
 }
 
-int ParticleGroup::addFromFile(uString filename, float x, float y)
+int ParticleGroup::addFromFile(std::string filename, float x, float y)
 {
 	Particle tempPart;
 	tempPart.setup();

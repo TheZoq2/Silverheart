@@ -5,6 +5,7 @@
 #include "GF.h"
 #include "DebugConsole.h"
 #include "DataReader.h"
+#include "zString.h"
 
 #include <vector>
 #include <string>
@@ -23,7 +24,7 @@ public:
 	void setup();
 	void update();
 
-	void addFromFile(int ID, uString filename, float x, float y);
+	void addFromFile(int ID, std::string filename, float x, float y);
 	void cloneParticle(int ID, Particle* clonePart, float x, float y);
 	void remove();
 	void removeParticle();
@@ -34,7 +35,7 @@ public:
 
 	int getID();
 
-	//uString getImage();
+	//std::string getImage();
 	std::string getImage();
 	float getAngle();
 	float getDirX();
@@ -68,7 +69,7 @@ private:
 	int visible;
 
 	//Particle properties
-	//uString image;
+	//std::string image;
 	std::string image;
 	float angle;
 	float dirX;
@@ -92,7 +93,7 @@ public:
 	void setup();
 	void update();
 
-	int addFromFile(uString filename, float x, float y);
+	int addFromFile(std::string filename, float x, float y);
 	int addFromClone(int cloneID);
 	void removeParticles(int ID);
 

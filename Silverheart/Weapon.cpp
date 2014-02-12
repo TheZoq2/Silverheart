@@ -11,18 +11,18 @@ Weapon::~Weapon(void)
 {
 }
 
-void Weapon::loadWeaponByName(uString name)
+void Weapon::loadWeaponByName(std::string name)
 {
-	uString filename;
-	filename.SetStr(weapPath);
-	filename.Append(name);
+	std::string filename;
+	filename = weapPath;
+	filename = name;
 	//Making sure the file exists
-	if(agk::GetFileExists(filename))
+	if(agk::GetFileExists(filename.data()))
 	{
-		uString spritePath;
-		spritePath.SetStr(" ");
+		std::string spritePath;
+		spritePath = " ";
 		//Reading the file
-		int fileID = agk::OpenToRead(filename);
+		int fileID = agk::OpenToRead(filename.data());
 
 		handleX = 0;
 		handleY = 0;
@@ -33,78 +33,78 @@ void Weapon::loadWeaponByName(uString name)
 			
 			line = agk::ReadLine(fileID);
 
-			if(DataReader::getType(line).CompareTo("Sprite") == 0) //Sprite path
+			if(DataReader::getType(line).compare("Sprite") == 0) //Sprite path
 			{
-				spritePath.SetStr(DataReader::getValue(line));
+				spritePath = DataReader::getValue(line);
 			}
-			if(DataReader::getType(line).CompareTo("Name") == 0) //Weapon name
+			if(DataReader::getType(line).compare("Name") == 0) //Weapon name
 			{
-				name.SetStr(DataReader::getValue(line));
+				name = DataReader::getValue(line);
 			}
-			if(DataReader::getType(line).CompareTo("Spread") == 0) //Spread
+			if(DataReader::getType(line).compare("Spread") == 0) //Spread
 			{
-				uString spreadStr;
-				spreadStr.SetStr(DataReader::getValue(line));
+				std::string spreadStr;
+				spreadStr = DataReader::getValue(line);
 
-				spread = float( atof(spreadStr) );
+				spread = (float) atof(spreadStr.data());
 			}
-			if(DataReader::getType(line).CompareTo("OffsetX") == 0) //OffsetX
+			if(DataReader::getType(line).compare("OffsetX") == 0) //OffsetX
 			{
-				uString offsetXStr;
-				offsetXStr.SetStr(DataReader::getValue(line));
+				std::string offsetXStr;
+				offsetXStr = DataReader::getValue(line);
 				
-				offsetX = float( atof(offsetXStr) );
+				offsetX = (float) atof(offsetXStr.data());
 			}
-			if(DataReader::getType(line).CompareTo("OffsetY") == 0) //OffsetY
+			if(DataReader::getType(line).compare("OffsetY") == 0) //OffsetY
 			{
-				uString offsetYStr;
-				offsetYStr.SetStr(DataReader::getValue(line));
+				std::string offsetYStr;
+				offsetYStr = DataReader::getValue(line);
 				
-				offsetY = float( atof(offsetYStr) );
+				offsetY = (float) atof(offsetYStr.data());
 			}
-			if(DataReader::getType(line).CompareTo("ScaleX") == 0) //ScaleX
+			if(DataReader::getType(line).compare("ScaleX") == 0) //ScaleX
 			{
-				uString scaleXStr;
-				scaleXStr.SetStr(DataReader::getValue(line));
+				std::string scaleXStr;
+				scaleXStr = DataReader::getValue(line);
 
-				scaleX = float( atof(scaleXStr) );
+				scaleX = (float) atof(scaleXStr.data());
 			}
-			if(DataReader::getType(line).CompareTo("ScaleY") == 0) //ScaleY
+			if(DataReader::getType(line).compare("ScaleY") == 0) //ScaleY
 			{
-				uString scaleYStr;
-				scaleYStr.SetStr(DataReader::getValue(line));
+				std::string scaleYStr;
+				scaleYStr = DataReader::getValue(line);
 
-				scaleY = float( atof(scaleYStr) );
+				scaleY = (float)atof(scaleYStr.data());
 			}
-			if(DataReader::getType(line).CompareTo("Projectile") == 0) //Projectile type
+			if(DataReader::getType(line).compare("Projectile") == 0) //Projectile type
 			{
-				projectile.SetStr(DataReader::getValue(line));
+				projectile = DataReader::getValue(line);
 			}
-			if(DataReader::getType(line).CompareTo("RateOfFire") == 0) //Rate of fire
+			if(DataReader::getType(line).compare("RateOfFire") == 0) //Rate of fire
 			{
-				rateOfFire = float( atof(DataReader::getValue(line)) );
+				rateOfFire = (float) atof(DataReader::getValue(line).data());
 			}
-			if(DataReader::getType(line).CompareTo("BarrelX") == 0) //BarrelX
+			if(DataReader::getType(line).compare("BarrelX") == 0) //BarrelX
 			{
-				uString barrelXstr;
-				barrelXstr.Append(DataReader::getValue(line));
+				std::string barrelXstr;
+				barrelXstr.append(DataReader::getValue(line));
 
-				barrelX = float( atof(barrelXstr) );
+				barrelX = (float) atof(barrelXstr.data());
 			}
-			if(DataReader::getType(line).CompareTo("BarrelY") == 0) //BarrelY
+			if(DataReader::getType(line).compare("BarrelY") == 0) //BarrelY
 			{
-				uString barrelYstr;
-				barrelYstr.Append(DataReader::getValue(line));
+				std::string barrelYstr;
+				barrelYstr.append(DataReader::getValue(line));
 
-				barrelY = float( atof(barrelYstr) );
+				barrelY = (float) atof(barrelYstr.data());
 			}
-			if(DataReader::getType(line).CompareTo("HandleX") == 0)
+			if(DataReader::getType(line).compare("HandleX") == 0)
 			{
-				handleX = float(atof(DataReader::getValue(line)));
+				handleX = (float) atof(DataReader::getValue(line).data());
 			}
-			if(DataReader::getType(line).CompareTo("HandleY") == 0)
+			if(DataReader::getType(line).compare("HandleY") == 0)
 			{
-				handleY = float(atof(DataReader::getValue(line)));
+				handleY = (float) atof(DataReader::getValue(line).data());
 			}
 
 			delete[] line; //Deleting the string
@@ -113,16 +113,16 @@ void Weapon::loadWeaponByName(uString name)
 		agk::CloseFile(fileID);
 
 		//Making sure a path to the image has been set before loading the weapon
-		if(spritePath.CompareTo(" ") != 0)
+		if(spritePath.compare(" ") != 0)
 		{
 			//A path has been specified, try loading it
-			uString spriteFile;
-			spriteFile.SetStr(GF::getPath(spritePath));
+			std::string spriteFile;
+			spriteFile = GF::getPath(spritePath);
 
-			if(agk::GetFileExists(spriteFile))
+			if(agk::GetFileExists(spriteFile.data()))
 			{
 				//The file existed, let's load it
-				imgID = agk::LoadImage(spriteFile);
+				imgID = agk::LoadImage(spriteFile.data());
 				SID = agk::CreateSprite(imgID);
 
 				agk::SetSpriteOffset(SID, offsetX, offsetY); //Setting the offset of the weapon sprite

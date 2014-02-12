@@ -29,27 +29,27 @@ public:
 	float getX();
 	float getY();
 
-	void setName(uString name);
+	void setName(std::string name);
 	void setUsable(int usable);
-	void setActScript(uString activScript);
-	void setUseMsg(uString msg);
-	void setLabel(int slot, uString label);
+	void setActScript(std::string activScript);
+	void setUseMsg(std::string msg);
+	void setLabel(int slot, std::string label);
 	void setTarget(float targetX, float targetY);
 	void setSpeed(float speed);
 	void setDrawPos(float x, float y);//Sets the position of the sprite but not the x/y variables, will cause issues
 
-	uString getName();
+	std::string getName();
 	int getUsable();
-	uString getActScript();
-	uString getUseMsg();
-	uString getLabel(int slot);
+	std::string getActScript();
+	std::string getUseMsg();
+	std::string getLabel(int slot);
 	bool getHit(float x, float y);
 	float getEdgeRadius();
 
 	void addOperation(std::string operation);
 private:
 	int SID;
-	uString file;
+	std::string file;
 
 	int physState;
 	int depth;
@@ -59,12 +59,12 @@ private:
 	float scaleY;
 	float angle;
 
-	uString name;
+	std::string name;
 	int usable;
-	uString activScript;
-	uString useMsg;
+	std::string activScript;
+	std::string useMsg;
 	
-	uString label[5];
+	std::string label[5];
 
 	std::list< std::string >* operations; //List of things that the part should do each update
 

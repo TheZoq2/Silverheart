@@ -86,7 +86,7 @@ int LUA_getPartLabelValue(lua_State* L)
 	//Getting the part
 	Part* cPart = l_defaultWorld->getPartFromID(partID);
 
-	std::string labelValue = cPart->getLabel(label).GetStr();
+	std::string labelValue = cPart->getLabel(label);
 
 	lua_pushstring(L, labelValue.data());
 

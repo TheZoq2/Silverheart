@@ -98,25 +98,25 @@ float Part::getY()
 	return y;
 }
 
-void Part::setActScript(uString activScript)
+void Part::setActScript(std::string activScript)
 {
-	this->activScript.SetStr(activScript);
+	this->activScript = activScript;
 }
-void Part::setName(uString name)
+void Part::setName(std::string name)
 {
-	this->name.SetStr(name);
+	this->name = name;
 }
 void Part::setUsable(int usable)
 {
 	this->usable = usable;
 }
-void Part::setUseMsg(uString useMsg)
+void Part::setUseMsg(std::string useMsg)
 {
-	this->useMsg.SetStr(useMsg);
+	this->useMsg = useMsg;
 }
-void Part::setLabel(int slot, uString label)
+void Part::setLabel(int slot, std::string label)
 {
-	this->label[slot].SetStr(label);
+	this->label[slot] = label;
 }
 void Part::setTarget(float targetX, float targetY)
 {
@@ -132,11 +132,11 @@ void Part::setDrawPos(float x, float y)
 	agk::SetSpritePositionByOffset(SID, x, y);
 }
 
-uString Part::getActScript()
+std::string Part::getActScript()
 {
 	return activScript;
 }
-uString Part::getName()
+std::string Part::getName()
 {
 	return name;
 }
@@ -144,11 +144,11 @@ int Part::getUsable()
 {
 	return usable;
 }
-uString Part::getUseMsg()
+std::string Part::getUseMsg()
 {
 	return useMsg;
 }
-uString Part::getLabel(int slot)
+std::string Part::getLabel(int slot)
 {
 	return label[slot];
 }

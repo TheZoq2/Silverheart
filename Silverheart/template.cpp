@@ -42,7 +42,7 @@ void app::Begin(void)
 	fps = true;
 
 	//Creating the 1x1 sprite
-	agk::LoadImage(1, GF::getPath("1x1.png"));
+	agk::LoadImage(1, GF::getPath("1x1.png").data());
 	agk::CreateSprite(1, 1);
 	agk::SetSpriteVisible(1, 0);
 

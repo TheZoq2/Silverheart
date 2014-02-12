@@ -48,7 +48,7 @@ public:
 
 	struct worldSprite //There will be one of these per image in the world. They will be cloned to create the world parts
 	{
-		uString file;
+		std::string file;
 
 		int SID;
 		int imgID;
@@ -56,20 +56,20 @@ public:
 
 	struct Entry
 	{
-		uString name;
+		std::string name;
 		float x;
 		float y;
 	};
 
 	void begin(); //Used as constructor
 
-	int checkForWS(uString name); //Will look thru the list of world sprites and return the ID of any existing sprite with the same filename
-	int createWS(uString name);	//Creates a hidden sprite and returns the ID in the worldSprite list
+	int checkForWS(std::string name); //Will look thru the list of world sprites and return the ID of any existing sprite with the same filename
+	int createWS(std::string name);	//Creates a hidden sprite and returns the ID in the worldSprite list
 
-	Entry* findEntry(uString name);
+	Entry* findEntry(std::string name);
 
 	void loadBaseMedia();
-	void load(uString name);
+	void load(std::string name);
 	void update(float playerX, float playerY);
 	void clear();
 	void generateBackgroundTextures();
@@ -82,7 +82,7 @@ public:
 	void setCloudLayers(int cloudLayers);
 	void setLastActive(int lastActive);
 
-	Part* getPartFromName(uString name); //This function goes thru all the parts and looks for one with the name specified //It will return the first part with the name
+	Part* getPartFromName(std::string name); //This function goes thru all the parts and looks for one with the name specified //It will return the first part with the name
 	Part* getPartFromID(int partID);
 	int getPartAmount();
 	int getPartSID(int partID); //Returns the sprite id of a part in the world
@@ -104,7 +104,7 @@ public:
 	//int getEntryAmount();
 	//Entry* getEntry(int entryID);
 
-	uString getName();
+	std::string getName();
 
 	//Backdrop
 	void loadBG();
@@ -133,7 +133,7 @@ private:
 		int depth;
 	};
 
-	uString name;
+	std::string name;
 
 	std::vector< Part >* part;
 	std::list< Part* >* partsToUpdate;

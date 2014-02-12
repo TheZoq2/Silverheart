@@ -5,7 +5,7 @@ int dc_editID;
 int dc_bgSID;
 int dc_visible = 0;
 
-uString consoleText;
+std::string consoleText;
 
 DebugConsole::DebugConsole(void)
 {
@@ -45,23 +45,23 @@ void DebugConsole::setup()
 	setVisible(0);
 }
 
-void DebugConsole::addToLog(uString text)
+void DebugConsole::addToLog(std::string text)
 {
-	consoleText.Append(text);
-	consoleText.Append("\n");
+	consoleText.append(text);
+	consoleText.append("\n");
 
 	//Calculating the new height of the debug log
-	agk::SetTextString(dc_textID, consoleText);
+	agk::SetTextString(dc_textID, consoleText.data());
 	float yPos = 250 - agk::GetTextTotalHeight(dc_textID);
 	agk::SetTextPosition(dc_textID, 0, yPos);
 }
 
-void DebugConsole::addC(uString msg)
+void DebugConsole::addC(std::string msg)
 {
-	consoleText.Append(msg);
+	consoleText.append(msg);
 
 	//Calculating the new height of the debug log
-	agk::SetTextString(dc_textID, consoleText);
+	agk::SetTextString(dc_textID, consoleText.data());
 	float yPos = 250 - agk::GetTextTotalHeight(dc_textID);
 	agk::SetTextPosition(dc_textID, 0, yPos);
 }

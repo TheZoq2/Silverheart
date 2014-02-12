@@ -11,45 +11,45 @@ DataReader::~DataReader(void)
 {
 }
 
-uString DataReader::getType(uString line)
+std::string DataReader::getType(std::string line)
 {
-	uString type;
+	std::string type;
 
 	//Checking if this is a comment
-	uString comment;comment.SetStr("//");
-	uString commentChk;
-	line.SubString(commentChk, 0, 2);
-	if(comment.CompareTo(commentChk) == 0) //This wasn't a comment, check for commands
+	std::string comment = "//";
+	std::string commentChk;
+	commentChk = line.substr(0, 2);
+	if(comment.compare(commentChk) == 0) //This wasn't a comment, check for commands
 	{
-		type.SetStr("comment");
+		type = "comment";
 	}
 	else //This was a comment
 	{
 		//Finding the : on the line
-		int colon = line.Find(':');
+		std::size_t colon = line.find(':');
 		//Checking if the colon is actually there
-		if(colon != -1)
+		if(colon != std::string::npos)
 		{
-			line.SubString(type, 0, colon);
+			type = line.substr(0, colon);
 		}
 		else
 		{
-			type.SetStr("error_typeNotFound");
+			type = "error_typeNotFound";
 		}
 	}
 
 	return type;
 }
 
-uString DataReader::getValue(uString line)
+std::string DataReader::getValue(std::string line)
 {
-	uString value;
+	std::string value;
 	//Finding the colon which is the start of the character
-	int colon = line.Find(':');
+	int colon = line.find(':');
 
 	if(colon != -1) //Making sure there actually is a colon on  the line
 	{
-		line.SubString(value, colon + 1, -1); //Returning the whole line value
+		value = line.substr(colon + 1, std::string::npos); //Returning the whole line value
 	}
 	else
 	{
@@ -61,28 +61,29 @@ uString DataReader::getValue(uString line)
 
 	return value;
 }
-uString DataReader::getValue(uString line, int pos)
+std::string DataReader::getValue(std::string line, int pos)
 {
-	uString value;
+	std::string value;
 	//Counting the amount of colons
-	int colon = line.Find(':');
+	int colon = line.find(':');
 
-	line.SubString(line, colon + 1, -1);
+	line = line.substr(colon + 1, std::string::npos);
 	for(int i = 0; i <= pos; i++)
 	{
-		int comma = line.Find(',');
-		line.SubString(value, 0, comma); //Getting the value
+		int comma = line.find(',');
+		value = line.substr(0, comma); //Getting the value
 
 		//Removing the already found parameters
-		line.SubString(line, comma + 1, -1);
+		line = line.substr(comma + 1, std::string::npos);
 	}
 
 	return value;
 }
 
-int DataReader::getValueAmount(uString line)
+int DataReader::getValueAmount(std::string line)
 {
-	return line.Count(',');
+	//return line.Count(',');
+	return std::count(line.begin(), line.end(), ',');
 }
 
 std::vector<std::string> DataReader::getArray(std::string data)

@@ -18,7 +18,7 @@ public:
 	Weapon(void);
 	~Weapon(void);
 
-	void loadWeaponByName(uString name);
+	void loadWeaponByName(std::string name);
 
 	void setPosition(float x, float y);
 
@@ -29,8 +29,8 @@ public:
 	float getHandleWorldX();
 	float getHandleWorldY();
 private:
-	uString name;
-	uString projectile;
+	std::string name;
+	std::string projectile;
 
 	bool exists;
 

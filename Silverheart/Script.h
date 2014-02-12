@@ -8,6 +8,7 @@
 #include "NPC.h"
 
 #include <vector>
+//#include <algorithm>
 
 class Script
 {
@@ -15,15 +16,15 @@ public:
 	Script(void);
 	~Script(void);
 
-	static void run(uString scriptName, Part* part, World* world, Player* player); //Scriptname - Script to run, Part - The part that started the script, Pointers - what should be affected by the script
+	static void run(std::string scriptName, Part* part, World* world, Player* player); //Scriptname - Script to run, Part - The part that started the script, Pointers - what should be affected by the script
 
-	static void runFunction(uString function, Part* part, World* world, Player* player, NPCGroup* npcGroup);
-	static void runFunction(uString function, Part* part, World* world, Player* player);
+	static void runFunction(std::string function, Part* part, World* world, Player* player, NPCGroup* npcGroup);
+	static void runFunction(std::string function, Part* part, World* world, Player* player);
 
-	static bool isSpecial(uString param);
-	static bool isLabel(uString param); //Will check if the parameter is a label
-	static uString getValueFromLabel(uString param, Part* part);
+	static bool isSpecial(std::string param);
+	static bool isLabel(std::string param); //Will check if the parameter is a label
+	static std::string getValueFromLabel(std::string param, Part* part);
 
-	static uString getParam(uString cmd, int number, bool isLast, Part* part);
+	static std::string getParam(std::string cmd, int number, bool isLast, Part* part);
 };
 

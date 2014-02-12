@@ -1,6 +1,7 @@
 #pragma once
 
 #include "agk.h"
+#include <string>
 
 //Global variables
 #ifndef _MY_GLOBALS_
@@ -28,8 +29,8 @@ public:
 
 	static void setupGlobals();
 
-	static uString getPath(char originalPath[128]); //Returns the path to a file with medium quality
-	static uString getPath(uString filename);
+	static std::string getPath(char originalPath[128]); //Returns the path to a file with medium quality
+	static std::string getPath(std::string filename);
 
 	static float tileSize; //The size of each tile in the world
 

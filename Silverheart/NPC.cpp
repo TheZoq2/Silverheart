@@ -23,7 +23,7 @@ NPC::~NPC(void)
 
 void NPC::setup()
 {
-	formal = new std::vector< uString >;
+	formal = new std::vector< std::string >;
 	path = new std::deque< int >;
 
 	state = 0;
@@ -79,20 +79,20 @@ void NPC::startConversation()
 	LuaHandler::runScript(conversationScript);
 }
 
-void NPC::createFromName(uString name)
+void NPC::createFromName(std::string name)
 {
 	setup();
 	//Getting the filename for the character
-	uString filename;
-	filename.Append(NPC_path);
-	filename.Append(name);
+	std::string filename;
+	filename.append(NPC_path);
+	filename.append(name);
 
-	if(agk::GetFileExists(filename))
+	if(agk::GetFileExists(filename.data()))
 	{
-		uString colSprite;
+		std::string colSprite;
 
 		//Starting to read the file
-		int fileID = agk::OpenToRead(filename);
+		int fileID = agk::OpenToRead(filename.data());
 		
 		int line = 1; //The line we are currently reading
 
@@ -102,50 +102,47 @@ void NPC::createFromName(uString name)
 			p = agk::ReadLine(fileID);
 
 			//Getting the type of data on the line
-			uString type;
-			type.SetStr(DataReader::getType(p));
+			std::string type;
+			type = DataReader::getType(p);
 			
-			if(line == 1 || type.CompareTo("comment") == 0) //If this is the first line or the line is a comment, skip it
+			if(line == 1 || type.compare("comment") == 0) //If this is the first line or the line is a comment, skip it
 			{
 
 			}
 			else
 			{
-				if(type.CompareTo("error_typeNotFound") == 0) //The line did not contain a type
+				if(type.compare("error_typeNotFound") == 0) //The line did not contain a type
 				{
-					DebugConsole::addC("Data error: Type not found (missing ':') at line ");
-					uString $line;
-					$line.Append(line);
-					DebugConsole::addC($line);
+					DebugConsole::addC("Data error: Type not found (missing ':')");
 					DebugConsole::addC(" In file ");
 					DebugConsole::addToLog(filename);
 				}
-				else if(type.CompareTo("Name") == 0) //If this is a name
+				else if(type.compare("Name") == 0) //If this is a name
 				{
 					//Since an NPC can only have one name, the simple value function is used
-					this->name.SetStr(DataReader::getValue(p));
+					this->name = DataReader::getValue(p);
 				}
-				else if(type.CompareTo("Formal") == 0)
+				else if(type.compare("Formal") == 0)
 				{
 					int valueAmount = DataReader::getValueAmount(p); //Getting the amount of values
 
 					for(int i = 0; i < valueAmount + 1; i++) //+1 since there are only commas between values and not at the end
 					{
-						uString value;
-						value.SetStr(DataReader::getValue(p, i));
+						std::string value;
+						value = DataReader::getValue(p, i);
 
 						this->formal->push_back(value);
 					}
 				}
-				else if(type.CompareTo("Dialogue") == 0)
+				else if(type.compare("Dialogue") == 0)
 				{
 					conversationScript = DataReader::getValue(p);
 				}
-				else if(type.CompareTo("ColSprite") == 0)
+				else if(type.compare("ColSprite") == 0)
 				{
-					colSprite.SetStr(DataReader::getValue(p)); //Saving the name of the collision sprite for future use
+					colSprite = DataReader::getValue(p); //Saving the name of the collision sprite for future use
 				}
-				else if(type.CompareTo("UpdateScript") == 0)
+				else if(type.compare("UpdateScript") == 0)
 				{
 					updateScript = DataReader::getValue(p);
 				}
@@ -160,9 +157,9 @@ void NPC::createFromName(uString name)
 		//All the data has been loaded, using that data to create the character
 		
 		//Creating the colision sprite
-		uString colPath;
-		colPath.SetStr( GF::getPath(colSprite) ); 
-		if(agk::GetFileExists(colPath))
+		std::string colPath;
+		colPath = GF::getPath(colSprite); 
+		if(agk::GetFileExists(colPath.data()))
 		{
 			chr.create(64, 128);
 
@@ -224,9 +221,9 @@ void NPC::addFlag(std::string name, int value)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void OldCharacter::create(uString colSprite)
+void OldCharacter::create(std::string colSprite)
 {
-	this->colimgID = agk::LoadImage(colSprite);
+	this->colimgID = agk::LoadImage(colSprite.data());
 
 	this->colSID = agk::CreateSprite(colimgID);
 
@@ -438,7 +435,7 @@ NPC* NPCGroup::getNPC(unsigned int index)
 	return NULL;
 }
 
-void NPCGroup::addNPCFromFile(uString file)
+void NPCGroup::addNPCFromFile(std::string file)
 {
 	NPC tempNPC;
 	tempNPC.createFromName(file);
@@ -447,7 +444,7 @@ void NPCGroup::addNPCFromFile(uString file)
 	npc->push_back(tempNPC);
 }
 
-void NPCGroup::addNPCFromFile(uString file, float x, float y)
+void NPCGroup::addNPCFromFile(std::string file, float x, float y)
 {
 	NPCGroup::addNPCFromFile(file);
 	npc->back().setPosition(x, y);

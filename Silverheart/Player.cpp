@@ -19,7 +19,7 @@ void Player::begin(World* world)
 	inventory = new std::vector< Item >;
 }
 
-void Player::load(uString name)
+void Player::load(std::string name)
 {
 	chr.create(64, 128);
 
@@ -51,14 +51,14 @@ void Player::load(uString name)
 	{
 		char* line = agk::ReadLine(fileID);
 
-		uString dataType;
-		dataType.SetStr(DataReader::getType(line));
+		std::string dataType;
+		dataType = DataReader::getType(line);
 
-		if(dataType.CompareTo("SpineFile") == 0)
+		if(dataType.compare("SpineFile") == 0)
 		{
 			spineFile = DataReader::getValue(line);
 		}
-		if(dataType.CompareTo("AtlasImage") == 0)
+		if(dataType.compare("AtlasImage") == 0)
 		{
 			atlasFile = DataReader::getValue(line);
 		}
@@ -69,7 +69,7 @@ void Player::load(uString name)
 	agk::CloseFile(fileID);
 }
 
-void Player::spawn(uString name)
+void Player::spawn(std::string name)
 {
 	//Finding the spawnpoint
 	/*World::Entry spawnPoint = *world->findEntry(name);
@@ -226,12 +226,12 @@ void Player::activation()
 			agk::SetTextPosition(activateText, agk::WorldToScreenX( closestPart->getX() ), agk::WorldToScreenY( closestPart->getY() ));
 
 			//Changing the text to the use text of the part
-			uString fText;
-			fText.SetStr(i_activateName);
-			fText.Append(") ");
-			fText.Append(closestPart->getUseMsg());
+			std::string fText;
+			fText = i_activateName;
+			fText.append(") ");
+			fText.append(closestPart->getUseMsg());
 
-			agk::SetTextString(activateText, fText);
+			agk::SetTextString(activateText, fText.data());
 
 			//Adding the background
 			agk::SetSpritePosition(activateSprite, agk::WorldToScreenX(closestPart->getX()) -5.0f, agk::WorldToScreenY(closestPart->getY()) - 2.5f);
@@ -242,22 +242,22 @@ void Player::activation()
 			if(Input::activate() == true)
 			{
 				//Getting the script of the item
-				uString actScript;
-				actScript.SetStr("scripts/");
-				actScript.Append(closestPart->getActScript());
+				std::string actScript;
+				actScript = ("scripts/");
+				actScript.append(closestPart->getActScript());
 
 				//Saving the part that was activated last for use with labels in lua
 				world->setLastActive(closestPartID);
 
 				//Checking if this is a lua script or an old script
-				if(actScript.FindStr(".lua") != -1)
+				if(actScript.find(".lua") != -1)
 				{
-					LuaHandler::runScript(actScript.GetStr());
+					LuaHandler::runScript(actScript);
 				}
 				else
 				{
 					//Starting the script
-					Script::run(actScript, closestPart, world, this);
+					Script::run(actScript.data(), closestPart, world, this);
 				}
 			}
 		}
@@ -268,12 +268,12 @@ void Player::activation()
 			agk::SetTextPosition(activateText, agk::WorldToScreenX( closestNPC->getX() ), agk::WorldToScreenY( closestNPC->getY() ));
 
 			//Changing the text to the use text of the part
-			uString fText;
-			fText.SetStr(i_activateName);
-			fText.Append(") ");
-			fText.Append("talk");
+			std::string fText;
+			fText = i_activateName;
+			fText.append(") ");
+			fText.append("talk");
 
-			agk::SetTextString(activateText, fText);
+			agk::SetTextString(activateText, fText.data());
 
 			//Adding the background
 			agk::SetSpritePosition(activateSprite, agk::WorldToScreenX(closestNPC->getX()) -5.0f, agk::WorldToScreenY(closestNPC->getY()) - 2.5f);
@@ -369,7 +369,7 @@ Item Player::getItemFromSlot(int slot)
 {
 	return inventory->at(slot);
 }
-void Player::setCurrentWeaponByName(uString weaponName)
+void Player::setCurrentWeaponByName(std::string weaponName)
 {
 	cWeapon.loadWeaponByName(weaponName);
 }

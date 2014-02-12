@@ -21,10 +21,10 @@ public:
 	
 	void begin(World* world);
 
-	void load(uString name);
+	void load(std::string name);
 	void setupLuaFunctions();
 
-	void spawn(uString point);
+	void spawn(std::string point);
 
 	void setPosition(float x, float y);
 
@@ -37,7 +37,7 @@ public:
 	void setVisible(int visible);
 
 	void addItem(Item item);
-	void setCurrentWeaponByName(uString name);
+	void setCurrentWeaponByName(std::string name);
 
 	float getX();
 	float getY();

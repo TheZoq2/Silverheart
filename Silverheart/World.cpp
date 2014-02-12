@@ -29,11 +29,11 @@ void World::begin()
 	cloudLayers = 4;
 }
 
-void World::load(uString filename)
+void World::load(std::string filename)
 {
 	partsToUpdate = new std::list< Part* >;
 	//Starting to read the level file
-	int fileID = agk::OpenToRead(filename);
+	int fileID = agk::OpenToRead(filename.data());
 		//Reading the version of the file
 		char* p;//Char* to allow me to remove the string when done
 		p = agk::ReadString(fileID);
@@ -188,7 +188,7 @@ void World::load(uString filename)
 		}
 		else
 		{
-			DebugConsole::addC("Failed to load level: ");DebugConsole::addC(filename);
+			DebugConsole::addC("Failed to load level: ");DebugConsole::addC(filename.data());
 			DebugConsole::addC(", invalid version: ");DebugConsole::addToLog(p);
 		}
 	
@@ -552,7 +552,7 @@ void World::loadV3(char* p, int fileID)
 			delete[] p; //Removing the data pointed to by p
 
 			p = agk::ReadString(fileID); //Reading the name of the level
-			name.SetStr(p);
+			name = p;
 			delete[] p;
 			p = agk::ReadString(fileID); delete[] p; //Backgrounds -- Unused
 			p = agk::ReadString(fileID); delete[] p; //Backgrounds -- Unused
@@ -567,24 +567,24 @@ void World::loadV3(char* p, int fileID)
 				//Creating a temporary variable which will be pushed back into the vector once everything is set up
 				Part tempPart;
 				//Reading the filename
-				//uString filename = agk::ReadString(fileID);
+				//std::string filename = agk::ReadString(fileID);
 
-				uString filename;
-				filename.SetStr(agk::ReadString(fileID));
+				std::string filename;
+				filename = agk::ReadString(fileID);
 
 				//Checking if the filename already exists
 				//Making sure the sprite we are trying to load actually exists
 
 				bool fileExist = true;
 				//Making sure that the file exists
-				if(agk::GetFileExists(filename) == 0)
+				if(agk::GetFileExists(filename.data()) == 0)
 				{
 					fileExist = false;
 
 					//If it dosn't exist, write that to a debug file
 					int debugID = agk::OpenToWrite("debug.txt", 1);
 					agk::WriteString(debugID, "\n The sprite ");
-					agk::WriteString(debugID, filename.GetStr());
+					agk::WriteString(debugID, filename.data());
 					agk::WriteString(debugID, " didn't exist");
 					agk::CloseFile(debugID);
 				}
@@ -682,7 +682,7 @@ void World::loadV3(char* p, int fileID)
 			int entryAmount = agk::ReadInteger(fileID);
 			for(int i = 0; i < entryAmount; i++)
 			{
-				uString name = agk::ReadString(fileID);
+				std::string name = agk::ReadString(fileID);
 				float x = agk::ReadFloat(fileID);
 				float y = agk::ReadFloat(fileID);
 
@@ -701,7 +701,7 @@ void World::loadV4(char* p, int fileID)
 	delete[] p; //Removing the data pointed to by p
 
 	p = agk::ReadString(fileID); //Reading the name of the level
-	name.SetStr(p);
+	name = p;
 	delete[] p;
 	p = agk::ReadString(fileID); delete[] p; //Backgrounds -- Unused
 	p = agk::ReadString(fileID); delete[] p; //Backgrounds -- Unused
@@ -716,24 +716,24 @@ void World::loadV4(char* p, int fileID)
 		//Creating a temporary variable which will be pushed back into the vector once everything is set up
 		Part tempPart;
 		//Reading the filename
-		//uString filename = agk::ReadString(fileID);
+		//std::string filename = agk::ReadString(fileID);
 
-		uString filename;
-		filename.SetStr(agk::ReadString(fileID));
+		std::string filename;
+		filename = (agk::ReadString(fileID));
 
 		//Checking if the filename already exists
 		//Making sure the sprite we are trying to load actually exists
 
 		bool fileExist = true;
 		//Making sure that the file exists
-		if(agk::GetFileExists(filename) == 0)
+		if(agk::GetFileExists(filename.data()) == 0)
 		{
 			fileExist = false;
 
 			//If it dosn't exist, write that to a debug file
 			int debugID = agk::OpenToWrite("debug.txt", 1);
 			agk::WriteString(debugID, "\n The sprite ");
-			agk::WriteString(debugID, filename.GetStr());
+			agk::WriteString(debugID, filename.data());
 			agk::WriteString(debugID, " didn't exist");
 			agk::CloseFile(debugID);
 		}
@@ -852,13 +852,14 @@ void World::loadV4(char* p, int fileID)
 	}*/
 }
 
-int World::checkForWS(uString filename)
+int World::checkForWS(std::string filename)
 {
 	int ID = 0;
 
 	for(unsigned int i = 0; i < wS->size(); i++)
 	{
-		if(strcmp(wS->at(i).file.GetStr(), filename.GetStr()) == 0)
+		//if(strcmp(wS->at(i).file.GetStr(), filename.GetStr()) == 0)
+		if(wS->at(i).file.compare(filename) == 0)
 		{
 			ID = i;
 		}
@@ -867,15 +868,15 @@ int World::checkForWS(uString filename)
 	return ID;
 }
 
-int World::createWS(uString filename)
+int World::createWS(std::string filename)
 {
 	int ID;
 
 	ID = wS->size(); //getting the index of the new worldSprite
 
 	worldSprite tempWS;
-	tempWS.file.SetStr(filename.GetStr());
-	tempWS.imgID = agk::LoadImage(filename);
+	tempWS.file = (filename);
+	tempWS.imgID = agk::LoadImage(filename.data());
 	tempWS.SID = agk::CreateSprite(tempWS.imgID);
 
 	//Hiding the sprite for now
@@ -886,13 +887,13 @@ int World::createWS(uString filename)
 	return ID;
 }
 
-World::Entry* World::findEntry(uString name)
+World::Entry* World::findEntry(std::string name)
 {
 	int slot = 0;
 
 	for(unsigned int i = 0; i < entry->size(); i++)
 	{
-		if(name.CompareTo(entry->at(i).name) == 0)
+		if(name.compare(entry->at(i).name) == 0)
 		{
 			slot = i;
 		}
@@ -918,13 +919,13 @@ void World::setLastActive(int lastActive)
 	this->lastActive = lastActive;
 }
 
-Part* World::getPartFromName(uString name) //This function goes thru all the parts and looks for one with the name specified //It will return the first part with the name
+Part* World::getPartFromName(std::string name) //This function goes thru all the parts and looks for one with the name specified //It will return the first part with the name
 {
 	Part* fPart = 0; //Will be 0 or null if no part is found
 
 	for(unsigned int i = 0; i < part->size(); i++)
 	{
-		if(part->at(i).getName().CompareTo(name) == 0) //Checking if the names are the same
+		if(part->at(i).getName().compare(name) == 0) //Checking if the names are the same
 		{
 			fPart = &part->at(i);
 			return fPart;
@@ -1096,7 +1097,7 @@ int World::getPhysicsCollision(int sensor)
 	return &entry->at(entryID);
 }*/
 
-uString World::getName()
+std::string World::getName()
 {
 	return name;
 }
@@ -1108,7 +1109,7 @@ void World::loadBaseMedia() //Loads media that is used in all worlds
 
 	//Loading the media
 	CloudBase tempCB;
-	tempCB.img = agk::LoadImage(GF::getPath("Background/cloud1.png"));
+	tempCB.img = agk::LoadImage(GF::getPath("Background/cloud1.png").data());
 	tempCB.SID = agk::CreateSprite(tempCB.img);
 	agk::SetSpriteDepth(tempCB.SID, 900);
 	agk::SetSpriteScale(tempCB.SID, 0.07f, 0.07f);
@@ -1118,7 +1119,7 @@ void World::loadBaseMedia() //Loads media that is used in all worlds
 	cloudBase->push_back(tempCB);
 
 	//Creating the next cloud
-	tempCB.img = agk::LoadImage(GF::getPath("Background/cloud2.png"));
+	tempCB.img = agk::LoadImage(GF::getPath("Background/cloud2.png").data());
 	tempCB.SID = agk::CreateSprite(tempCB.img);
 	agk::SetSpriteDepth(tempCB.SID, 900);
 	agk::SetSpriteScale(tempCB.SID, 0.07f, 0.07f);

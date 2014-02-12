@@ -52,9 +52,9 @@ void Projectile::createFromBase(ProjectileBase* projBase, float x, float y, floa
 	}
 
 	//Impact particles
-	impactPartName = new std::vector< uString >;
+	impactPartName = new std::vector< std::string >;
 	impactPart = new std::vector< int >;
-	std::vector< uString >* basePartNames = projBase->getImpactPartNames();
+	std::vector< std::string >* basePartNames = projBase->getImpactPartNames();
 
 	for(unsigned int i = 0; i < basePartNames->size(); i++)
 	{
@@ -232,32 +232,32 @@ void Projectile::setPosition(float x, float y)
 }
 
 /////////////////////////////////////////////////////////////
-void ProjectileBase::loadFromName(uString name, ParticleGroup* partGroup)
+void ProjectileBase::loadFromName(std::string name, ParticleGroup* partGroup)
 {
-	uString filename;
-	filename.SetStr(projPath);
-	filename.Append(name);
+	std::string filename;
+	filename = projPath;
+	filename.append(name);
 
 	//Making sure the projectile file exists
-	if(agk::GetFileExists(filename))
+	if(agk::GetFileExists(filename.data()))
 	{
 		int colorR = -1;
 		int colorG = -1;
 		int colorB = -1;
 
 
-		uString spriteName;
-		spriteName.SetStr(" ");
+		std::string spriteName;
+		spriteName = " ";
 		type = 0;
 		friction = -1;
 		RelativeMass = 1;
-		uString partName;
-		partName.SetStr("NONE");
-		impactPart = new std::vector< uString >;
+		std::string partName;
+		partName = "NONE";
+		impactPart = new std::vector< std::string >;
 		partID = -1;
 
 		//Starting to read the file
-		int fileID = agk::OpenToRead(filename);
+		int fileID = agk::OpenToRead(filename.data());
 		
 		while(agk::FileEOF(fileID) == 0)
 		{
@@ -267,63 +267,70 @@ void ProjectileBase::loadFromName(uString name, ParticleGroup* partGroup)
 			line = agk::ReadLine(fileID);
 
 			//Checking the line with the datareader
-			uString dataType;
-			dataType.SetStr(DataReader::getType(line));
+			std::string dataType;
+			dataType = DataReader::getType(line);
 
-			if(dataType.CompareTo("Sprite") == 0) //Spritename
+			if(dataType.compare("Sprite") == 0) //Spritename
 			{
-				spriteName.SetStr(DataReader::getValue(line));
+				spriteName = DataReader::getValue(line);
 			}
-			if(dataType.CompareTo("Type") == 0)
+			if(dataType.compare("Type") == 0)
 			{
 				type = proj_physType;
 			}
-			if(dataType.CompareTo("ScaleX") == 0) //ScaleX
+			if(dataType.compare("ScaleX") == 0) //ScaleX
 			{
-				scaleX = float(atof(DataReader::getValue(line)));
+				scaleX = float(atof(DataReader::getValue(line).data()));
 			}
-			if(dataType.CompareTo("ScaleY") == 0) //ScaleY
+			if(dataType.compare("ScaleY") == 0) //ScaleY
 			{
-				scaleY = float(atof(DataReader::getValue(line)));
+				scaleY = float(atof(DataReader::getValue(line).data()));
 			}
-			if(dataType.CompareTo("Speed") == 0) //Speed
+			if(dataType.compare("Speed") == 0) //Speed
 			{
-				speed = float(atof(DataReader::getValue(line)));
+				speed = float(atof(DataReader::getValue(line).data()));
 			}
-			if(dataType.CompareTo("ColorR") == 0)//Colors
+			if(dataType.compare("ColorR") == 0)//Colors
 			{
-				colorR = atoi(DataReader::getValue(line));
+				colorR = atoi(DataReader::getValue(line).data());
 			}
-			if(dataType.CompareTo("ColorG") == 0)//Colors
+			if(dataType.compare("ColorG") == 0)//Colors
 			{
-				colorG = atoi(DataReader::getValue(line));
+				colorG = atoi(DataReader::getValue(line).data());
 			}
-			if(dataType.CompareTo("ColorB") == 0)//Colors
+			if(dataType.compare("ColorB") == 0)//Colors
 			{
-				colorB = atoi(DataReader::getValue(line));
+				colorB = atoi(DataReader::getValue(line).data());
 			}
-			if(dataType.CompareTo("Friction") == 0)
+			if(dataType.compare("Friction") == 0)
 			{
-				friction = float(atof(DataReader::getValue(line)));
+				friction = float(atof(DataReader::getValue(line).data()));
 			}
-			if(dataType.CompareTo("RelativeMass") == 0)
+			if(dataType.compare("RelativeMass") == 0)
 			{
-				RelativeMass = float(atof(DataReader::getValue(line)));
+				RelativeMass = float(atof(DataReader::getValue(line).data()));
 			}
-			if(dataType.CompareTo("Trail") == 0)
+			if(dataType.compare("Trail") == 0)
 			{
-				partName.SetStr(DataReader::getValue(line));
+				partName = DataReader::getValue(line);
 			}
-			if(dataType.CompareTo("ImpactPart") == 0)
+			if(dataType.compare("ImpactPart") == 0)
 			{
-				int dataAmount = DataReader::getValueAmount(line);
+				/*int dataAmount = DataReader::getValueAmount(line);
 
 				for(int i = 0; i < dataAmount; i++)
 				{
-					uString tempVal;
-					tempVal.SetStr(DataReader::getValue(line, 1));
+					std::string tempVal;
+					tempVal = DataReader::getValue(line, 1);
 
 					impactPart->push_back(tempVal);
+				}*/
+
+				std::vector<std::string> dataParts = zString::split(DataReader::getValue(line), ",");
+
+				for(unsigned int i = 0; i < dataParts.size(); i++)
+				{
+					impactPart->push_back(dataParts.at(i));
 				}
 			}
 			delete[] line; //Removing the string from memory
@@ -336,18 +343,18 @@ void ProjectileBase::loadFromName(uString name, ParticleGroup* partGroup)
 		//The file has been read, creating the actual projectile base
 		
 		//Making sure a sprite was set
-		if(spriteName.CompareTo(" ") != 0)
+		if(spriteName.compare(" ") != 0)
 		{
-			this->name.SetStr(name);
+			this->name = name;
 
 			//Making sure the image exists
-			uString imgFile;
-			imgFile.SetStr(GF::getPath(spriteName));
+			std::string imgFile;
+			imgFile = GF::getPath(spriteName);
 
-			if(agk::GetFileExists(imgFile))
+			if(agk::GetFileExists(imgFile.data()))
 			{
 				//The image did exist
-				imgID = agk::LoadImage(imgFile);
+				imgID = agk::LoadImage(imgFile.data());
 				SID = agk::CreateSprite(imgID);
 
 				agk::SetSpriteScale(SID, scaleX, scaleY);
@@ -362,7 +369,7 @@ void ProjectileBase::loadFromName(uString name, ParticleGroup* partGroup)
 
 				agk::SetSpriteVisible(SID, 0);
 
-				if(partName.CompareTo("NONE")) //If the bullet has a trail
+				if(partName.compare("NONE")) //If the bullet has a trail
 				{
 					partID = partGroup->addFromFile(partName, 20, 20);
 					partGroup->setParticleVisible(partID, 0);
@@ -397,7 +404,7 @@ void ProjectileBase::loadFromName(uString name, ParticleGroup* partGroup)
 	}
 }
 
-uString ProjectileBase::getName()
+std::string ProjectileBase::getName()
 {
 	return name;
 }
@@ -429,7 +436,7 @@ float ProjectileBase::getRelativeMass()
 {
 	return RelativeMass;
 }
-std::vector< uString >* ProjectileBase::getImpactPartNames()
+std::vector< std::string >* ProjectileBase::getImpactPartNames()
 {
 	return this->impactPart;
 }
@@ -486,7 +493,7 @@ void ProjectileGroup::updateWorld( World* world)
 	}
 }
 
-void ProjectileGroup::addByName(uString name, float x, float y, float angle, float speedX, float speedY)
+void ProjectileGroup::addByName(std::string name, float x, float y, float angle, float speedX, float speedY)
 {
 	//Checking if this kind of projectile exists already
 	bool baseExists = false;
@@ -494,7 +501,7 @@ void ProjectileGroup::addByName(uString name, float x, float y, float angle, flo
 
 	for(unsigned int i = 0; i < projBase->size(); i++)
 	{
-		if(name.CompareTo(projBase->at(i).getName()) == 0) //If the name of the projectile base is the same as the one we want to create
+		if(name.compare(projBase->at(i).getName()) == 0) //If the name of the projectile base is the same as the one we want to create
 		{
 			baseExists = true;
 			baseIndex = i;

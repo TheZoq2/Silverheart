@@ -49,28 +49,28 @@ void WorldSim::load()
 			//Checking what kind of data this is
 			if(strcmp(dataType.data(), "Name") == 0)
 			{
-				tempReg.setName(DataReader::getValue(line).GetStr());
+				tempReg.setName(DataReader::getValue(line));
 			}
 			if(strcmp(dataType.data(), "Owner") == 0)
 			{
-				std::string value = DataReader::getValue(line).GetStr();
+				std::string value = DataReader::getValue(line);
 				tempReg.setOwner(value);
 			}
 			if(strcmp(dataType.data(), "Population") == 0)
 			{
-				std::string value = DataReader::getValue(line).GetStr();
+				std::string value = DataReader::getValue(line);
 
 				tempReg.setPopulation((float)atof(value.data()));
 			}
 			if(strcmp(dataType.data(), "Wealth") == 0)
 			{
-				std::string value = DataReader::getValue(line).GetStr();
+				std::string value = DataReader::getValue(line);
 
 				tempReg.setWealth((float)atof(value.data()));
 			}
 			if(strcmp(dataType.data(), "Food") == 0)
 			{
-				std::string value = DataReader::getValue(line).GetStr();
+				std::string value = DataReader::getValue(line);
 
 				float food = (float)atof(value.data());
 				tempReg.setFood(food);
@@ -112,29 +112,29 @@ void WorldSim::load()
 			//Checking the kind of data
 			if(strcmp(dataType.data(), "Name") == 0)
 			{
-				tempFaction.setName(DataReader::getValue(line).GetStr());
+				tempFaction.setName(DataReader::getValue(line));
 			}
 			if(strcmp(dataType.data(), "Taxrate") == 0)
 			{
-				std::string valStr = DataReader::getValue(line).GetStr();
+				std::string valStr = DataReader::getValue(line);
 
 				tempFaction.setTaxrate((float)atof(valStr.data()));
 			}
 			if(strcmp(dataType.data(), "Foodmod") == 0)
 			{
-				std::string valStr = DataReader::getValue(line).GetStr();
+				std::string valStr = DataReader::getValue(line);
 
 				tempFaction.setFoodMod((float)atof(valStr.data()));
 			}
 			if(strcmp(dataType.data(), "Wealthmod") == 0)
 			{
-				std::string valStr = DataReader::getValue(line).GetStr();
+				std::string valStr = DataReader::getValue(line);
 
 				tempFaction.setWealthMod(float(atof(valStr.data())));
 			}
 			if(strcmp(dataType.data(), "Wealth") == 0)
 			{
-				std::string valStr = DataReader::getValue(line).GetStr();
+				std::string valStr = DataReader::getValue(line);
 
 				tempFaction.setWealth(float(atof(valStr.data())));
 			}

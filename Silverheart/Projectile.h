@@ -21,9 +21,9 @@
 class ProjectileBase //Base used to clone projectiles from
 {
 public:
-	void loadFromName(uString name, ParticleGroup* partGroup);
+	void loadFromName(std::string name, ParticleGroup* partGroup);
 
-	uString getName();
+	std::string getName();
 	bool getExists(); //Will return true if the projectile was loaded successfully
 	int getSID();
 	int getPartID();
@@ -31,9 +31,9 @@ public:
 	int getType();
 	float getRelativeMass();
 	float getFriction();
-	std::vector< uString >* getImpactPartNames();
+	std::vector< std::string >* getImpactPartNames();
 private:
-	uString name;
+	std::string name;
 
 	int imgID;
 	int SID;
@@ -59,7 +59,7 @@ private:
 	float RelativeMass;
 
 	//End particle
-	std::vector< uString >* impactPart;
+	std::vector< std::string >* impactPart;
 };
 
 class Projectile //Actual projectiles
@@ -99,7 +99,7 @@ private:
 	int impactState;
 
 	//Impact particles
-	std::vector< uString >* impactPartName;
+	std::vector< std::string >* impactPartName;
 	std::vector< int >* impactPart;
 };
 
@@ -110,7 +110,7 @@ public:
 	void update(float centerX, float centerY); //Center x and y are the center of the sphere which projectiles will be removed outside
 	void updateWorld(World* world);
 
-	void addByName(uString name, float x, float y, float angle, float speedX, float speedY);
+	void addByName(std::string name, float x, float y, float angle, float speedX, float speedY);
 private:
 	std::list< Projectile >* projs;
 

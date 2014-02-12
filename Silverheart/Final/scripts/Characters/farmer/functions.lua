@@ -42,10 +42,7 @@ function instantHate()
 end
 
 function bribe()
-	part = getPartByName("door")
-	target = getPartByName("door1Target")
+	speed = 2 -- The speed that the part should move at
 
-	speed = 0.15 -- The speed that the part should move at
-
-	movePartToPart(part, target, speed)
+	movePartToPart("door", "door1Target", speed)
 end
