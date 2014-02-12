@@ -157,7 +157,14 @@ void Editor::update(int selTool, bool uiActive)
 				
 				if(part != NULL)
 				{
-					part->move(moveX, moveY);
+					if(snapping == false)
+					{
+						part->move(moveX, moveY);
+					}
+					else
+					{
+						part->moveSnap(moveX, moveY);
+					}
 				}
 			}
 		}
@@ -179,7 +186,15 @@ void Editor::update(int selTool, bool uiActive)
 					float yScale = moveX / 500.0f;
 					float xScaleChange = 1 - xScale;
 					float yScaleChange = 1 - yScale;
-					part->scale(xScaleChange, xScaleChange);
+
+					if(snapping == false)
+					{
+						part->scale(xScaleChange, xScaleChange);
+					}
+					else
+					{
+						part->scaleSnap(xScaleChange, xScaleChange);
+					}
 
 					//Moving parts towards the center
 					if(part0 != NULL)
@@ -416,6 +431,17 @@ void Editor::incDepth(int amount)
 		Part* part = findPartByID(selParts->at(i));
 
 		part->incDepth(amount);
+	}
+}
+void Editor::toggleSnapping()
+{
+	if(snapping == true)
+	{
+		snapping = false;
+	}
+	else
+	{
+		snapping = true;
 	}
 }
 

@@ -1,5 +1,6 @@
 #include "World.h"
 
+#include "LuaHandler.h"
 
 World::World(void)
 {
@@ -13,6 +14,7 @@ World::~World(void)
 void World::begin()
 {
 	part = new std::vector< Part >;
+	partsToUpdate = new std::list< Part* >;
 	bgParts = new std::vector< Part >;
 
 	wS = new std::vector< worldSprite >;
@@ -289,6 +291,12 @@ void World::load(std::string filename)
 	agk::CloseFile(fileID);
 
 	loadBG();
+
+	//Runing the level onload script
+	std::string onload = "scripts/";
+	onload.append(filename);
+	onload.append("/onload.lua");
+	LuaHandler::runScript(onload);
 }
 
 void World::update(float playerX, float playerY)
@@ -336,7 +344,7 @@ void World::clear()
 
 	part->clear();
 	partsToUpdate->clear();
-
+	/*
 	//Removing stars
 	for(unsigned int i = 0; i < stars->size(); i++)
 	{
@@ -346,7 +354,7 @@ void World::clear()
 		}
 	}
 
-	stars->clear();
+	stars->clear();*/
 }
 
 void World::loadBG()

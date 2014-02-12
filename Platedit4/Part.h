@@ -14,7 +14,9 @@ public:
 
 	void highlight(int r, int g, int b);
 	void move(float mx, float my);
+	void moveSnap(float mx, float my);
 	void scale(float amountX, float amountY);
+	void scaleSnap(float amountX, float amountY);
 
 	void setAngle(float angle);
 	void setPosition(float x, float y);

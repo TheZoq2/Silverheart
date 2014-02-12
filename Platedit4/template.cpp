@@ -346,6 +346,11 @@ void app::toolInput()
 		{
 			editor.removeSelected();
 		}
+
+		if(agk::GetRawKeyPressed(9))
+		{
+			editor.toggleSnapping();
+		}
 	}
 	else
 	{

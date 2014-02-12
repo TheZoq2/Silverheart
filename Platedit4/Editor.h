@@ -79,6 +79,8 @@ public:
 	void incDepth(int depth);
 
 	void removeSelected();
+
+	void toggleSnapping();
 private:
 	void readNodeGroup(std::string group);
 	void readLinkGroup(std::string group);
@@ -110,5 +112,7 @@ private:
 
 	int selNode;
 	int lastSelNode;
+
+	bool snapping;
 };
 

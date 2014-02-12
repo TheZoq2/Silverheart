@@ -102,17 +102,17 @@ void app::Loop (void)
 		//LuaHandler::runScript("scripts/test.lua");
 		//agk::SetViewZoom(20);
 
-		std::string cWorldName;
+		//std::string cWorldName;
 		//cWorldName.SetStr("levels/lab1");
-		cWorldName = "levels/NPCTest";
+		//cWorldName = "levels/NPCTest";
 
-		world.load(cWorldName.data());
+		//world.load(cWorldName.data());
 	
 		//Checking if the level has a script that should be run
 		std::string oldDir = agk::GetCurrentDir();
 		agk::SetCurrentDir("");
-		
-		std::string levelScript = "scripts/";
+
+		/*std::string levelScript = "scripts/";
 		levelScript.append(cWorldName);
 		levelScript.append("/onload.lua");
 		//levelScript = "scripts/firstspawn.lua";
@@ -120,7 +120,7 @@ void app::Loop (void)
 		if(agk::GetFileExists(levelScript.data()))
 		{
 			LuaHandler::runScript(levelScript);
-		}
+		}*/
 
 		agk::SetCurrentDir(oldDir.data());
 
@@ -136,12 +136,11 @@ void app::Loop (void)
 		//player.spawn("start");
 		//Running the first spawn script
 		//Script::run("scripts/firstSpawn", 0, &world, &player);
-		LuaHandler::runScript("scripts/firstspawn.lua");
 		//int fileExists = agk::GetFileExists("scripts/test.lua");
 
-		programState = 1;
+		LuaHandler::runScript("scripts/firstspawn.lua");
 
-		player.addItem(ItemGen::generate(1));
+		programState = 1;
 	}
 
 

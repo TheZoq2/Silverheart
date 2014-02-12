@@ -78,6 +78,18 @@ void Part::move(float mx, float my)
 {
 	this->x = x + mx;
 	this->y = y + my;
+	this->xNoSnap = x;
+	this->yNoSnap = y;
+
+	agk::SetSpritePositionByOffset(SID, x, y);
+}
+void Part::moveSnap(float mx, float my)
+{
+	xNoSnap = xNoSnap + mx;
+	yNoSnap = yNoSnap + my;
+
+	x = floor(xNoSnap / 10) * 10;
+	y = floor(yNoSnap / 10) * 10;
 
 	agk::SetSpritePositionByOffset(SID, x, y);
 }
@@ -86,6 +98,19 @@ void Part::scale(float amountX, float amountY)
 {
 	scaleX = scaleX * amountX;
 	scaleY = scaleY * amountY;
+
+	this->scaleXNoSnap = scaleX;
+	this->scaleYNoSnap = scaleY;
+
+	agk::SetSpriteScale(SID, scaleX, scaleY);
+}
+void Part::scaleSnap(float amountX, float amountY)
+{
+	scaleXNoSnap = scaleXNoSnap * amountX;
+	scaleYNoSnap = scaleYNoSnap * amountY;
+
+	scaleX = floor(scaleXNoSnap * 50) / 50;
+	scaleY = floor(scaleYNoSnap * 50) / 50;
 
 	agk::SetSpriteScale(SID, scaleX, scaleY);
 }
