@@ -36,6 +36,8 @@ class app
 		UI uiGroup;
 
 		Editor editor;
+		Editor editor2;
+
 		int selTool;
 		
 		std::string selectedFolder;

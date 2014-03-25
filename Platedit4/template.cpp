@@ -18,6 +18,7 @@ void app::Begin(void)
 	//Loading the 1x1 sprite
 	agk::LoadImage(1,"media/1x1.png");
 	agk::CreateSprite(1, 1);
+	agk::SetSpriteVisible(1, 0);
 
 	//Class setup
 	GF::setupGlobals();
@@ -230,7 +231,6 @@ void app::Loop (void)
 	agk::Sync();
 }
 
-
 void app::End (void)
 {
 
@@ -352,8 +352,23 @@ void app::toolInput()
 			editor.toggleSnapping();
 		}
 	}
-	else
+	else if(agk::GetRawKeyState(17))
 	{
+		if(agk::GetRawKeyState(67))
+		{
+			editor.copy();
+		}
+		if(agk::GetRawKeyPressed(86))
+		{
+			editor.paste(i_mx, i_my);
+		}
+
+		if(agk::GetRawKeyState(48))
+		{
+			agk::Print("resetting zoom");
+			editor.resetZoom();
+		}
+
 		//Saving
 		if(agk::GetRawKeyState(83))
 		{

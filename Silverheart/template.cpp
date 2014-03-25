@@ -98,45 +98,11 @@ void app::Loop (void)
 		//worldSim.viewFactions(&mainUI);
 	}
 	else if(programState == 2)
-	{
-		//LuaHandler::runScript("scripts/test.lua");
-		//agk::SetViewZoom(20);
-
-		//std::string cWorldName;
-		//cWorldName.SetStr("levels/lab1");
-		//cWorldName = "levels/NPCTest";
-
-		//world.load(cWorldName.data());
-	
-		//Checking if the level has a script that should be run
-		std::string oldDir = agk::GetCurrentDir();
-		agk::SetCurrentDir("");
-
-		/*std::string levelScript = "scripts/";
-		levelScript.append(cWorldName);
-		levelScript.append("/onload.lua");
-		//levelScript = "scripts/firstspawn.lua";
-
-		if(agk::GetFileExists(levelScript.data()))
-		{
-			LuaHandler::runScript(levelScript);
-		}*/
-
-		agk::SetCurrentDir(oldDir.data());
-
-		//world.loadMapAsBg("levels/bgtest1");
+	{	
 		world.loadBaseMedia();
 		world.setTime(800);
 
 		player.load(GF::getPath("Bound.png"));
-
-		//enemy->at(0).load(GF::getPath("Bound.png"));
-		//enemy->at(0).spawn("entrance");
-
-		//player.spawn("start");
-		//Running the first spawn script
-		//Script::run("scripts/firstSpawn", 0, &world, &player);
-		//int fileExists = agk::GetFileExists("scripts/test.lua");
 
 		LuaHandler::runScript("scripts/firstspawn.lua");
 

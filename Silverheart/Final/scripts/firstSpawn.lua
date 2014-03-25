@@ -1,4 +1,4 @@
 --Spawning the player
-loadNewLevel("NPCtest")
+loadNewLevel("platformTest")
 playerSpawnAt("spawn1")
-setPlayerWeapon("data/Weapons/weapon1")
+setPlayerWeapon("data/Weapons/GL")

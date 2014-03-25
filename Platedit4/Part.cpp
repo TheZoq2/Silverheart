@@ -173,6 +173,15 @@ void Part::setData(std::string data)
 {
 	this->data = data;
 }
+void Part::setColor(int colorR, int colorG, int colorB, int colorA)
+{
+	this->colorR = colorR;
+	this->colorG = colorG;
+	this->colorB = colorB;
+	this->colorA = colorA;
+
+	agk::SetSpriteColor(SID, colorR, colorG, colorB, colorA);
+}
 
 std::string Part::getImgName()
 {

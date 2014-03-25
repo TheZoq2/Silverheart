@@ -24,6 +24,8 @@ void Editor::setup()
 	cameraZoom = 1;
 
 	selNode = -1;
+
+	resetZoom();
 }
 
 void Editor::update(int selTool, bool uiActive)
@@ -101,6 +103,8 @@ void Editor::update(int selTool, bool uiActive)
 					tempLink.create(nextLink, nextNode, selNode, 0);
 
 					links->push_back(tempLink);
+
+					nextLink++;
 				}
 
 				selNode = nextNode; //Selecting the new node to make chains easier to make
@@ -351,7 +355,7 @@ void Editor::update(int selTool, bool uiActive)
 		cameraY = cameraY + -sMoveY / cameraZoom;
 	}
 	cameraZoom = cameraZoom + 0.01f * scrollAmount;
-
+	
 	agk::SetViewZoom(cameraZoom);
 	agk::SetViewOffset(cameraX - agk::GetVirtualWidth() / 2, cameraY - agk::GetVirtualHeight() / 2);
 }
@@ -381,10 +385,16 @@ void Editor::updateSelectedWindow( UI* uiGroup)
 				uiGroup->addWindow("selected", "1x1.png", (float)agk::GetVirtualWidth() - 250.0f, 0, 250.0f, (float)agk::GetVirtualHeight());
 				uiGroup->setWindowColor("selected", 150, 150, 150, 255);
 
-				uiGroup->addEditboxToWindow("selected", "name", 5, 5, 250, 16);
+				uiGroup->addEditboxToWindow("selected", "name", 5, 5, 250, 100);
 				uiGroup->setEditboxValue("selected", "name", part->getData());
 
-				uiGroup->addSimpleListToWindow("selected", "dataList", 5, 25, 240, 200, "Data");
+				uiGroup->addSimpleListToWindow("selected", "dataList", 5, 150, 240, 200, "Data");
+
+				agk::Print("Creating window");
+				/*uiGroup->addEditboxToWindow("selected", "colorR", 5, 250, 50, 20);
+				uiGroup->addEditboxToWindow("selected", "colorG", 65, 250, 50, 20);
+				uiGroup->addEditboxToWindow("selected", "colorR", 125, 250, 50, 20);
+				uiGroup->addEditboxToWindow("selected", "colorA", 185, 250, 50, 20);*/
 			}
 
 			//Adding the data to the data list
@@ -403,6 +413,16 @@ void Editor::updateSelectedWindow( UI* uiGroup)
 
 			part->setData(uiGroup->getEditboxValue("selected", "name"));
 
+			/*std::string rStr = uiGroup->getEditboxValue("selected", "colorR");
+			std::string gStr = uiGroup->getEditboxValue("selected", "colorG");
+			std::string bStr = uiGroup->getEditboxValue("selected", "colorB");
+			std::string aStr = uiGroup->getEditboxValue("selected", "colorA");
+
+			int r = atoi(rStr.data());
+			int g = atoi(gStr.data());
+			int b = atoi(bStr.data());
+			int a = atoi(aStr.data());*/
+
 			
 		}
 		else //If there is more than 1 part selected
@@ -412,6 +432,46 @@ void Editor::updateSelectedWindow( UI* uiGroup)
 				uiGroup->removeWindow("selected");
 			}
 		}
+	}
+}
+
+void Editor::resetZoom()
+{
+	cameraX = 0;
+	cameraY = 0;
+
+	cameraZoom = 1;
+}
+
+void Editor::copy()
+{
+	if(selParts->size() > 0)
+	{
+		clipboard = selParts->at(0);
+	}
+	else
+	{
+		clipboard = -1;
+	}
+}
+void Editor::paste(float x, float y)
+{
+	Part* cpPart = findPartByID(clipboard);
+
+	if(cpPart != NULL)
+	{
+		Part newPart;
+
+		newPart.create(nextPart, cpPart->getImgName(), x, y, 100);
+		newPart.setScale(cpPart->getScaleX(), cpPart->getScaleY());
+		newPart.setPosition(x, y);
+		newPart.setAngle(cpPart->getAngle());
+		newPart.setData(cpPart->getData());
+		newPart.setPhysState(cpPart->getPhysState());
+
+		parts->push_back(newPart);
+
+		nextPart++;
 	}
 }
 
@@ -764,7 +824,10 @@ void Editor::loadMap(std::string filename)
 		int highestlinkID = 0;
 		for(unsigned int i = 0; i < links->size(); i++)
 		{
-			if(links->at(i).getVecID() > highestlinkID) highestlinkID = links->at(i).getVecID();
+			if(links->at(i).getVecID() > highestlinkID)
+			{
+				highestlinkID = links->at(i).getVecID();
+			}
 		}
 		nextLink = highestlinkID;
 	}
@@ -858,6 +921,9 @@ void Editor::removeSelected()
 	}
 
 	selParts->clear();
+
+	//Deleting the current clipboard
+	clipboard = NULL;
 }
 
 Node* Editor::findNodeByID(int ID)

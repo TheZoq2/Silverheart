@@ -715,7 +715,7 @@ ImgList* Window::findImgListById(std::string ID)
 }
 UI_editbox* Window::findEditboxById(std::string ID)
 {
-	UI_editbox* result;
+	UI_editbox* result = NULL;
 	for(unsigned int i = 0; i < editboxes->size(); i++)
 	{
 		if(ID.compare(editboxes->at(i).getVecID()) == 0)
@@ -1186,6 +1186,8 @@ void UI_editbox::create(std::string vecID, float x, float y, float sizeX, float 
 	agk::SetEditBoxPosition(ID, x, y);
 	agk::SetEditBoxSize(ID, sizeX, sizeY);
 	agk::SetEditBoxDepth(ID, 1);
+	agk::SetEditBoxTextSize(ID, 16);
+	agk::SetEditBoxMultiLine(ID, 1);
 }
 void UI_editbox::remove()
 {

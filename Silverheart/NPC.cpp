@@ -26,6 +26,14 @@ void NPC::setup()
 	formal = new std::vector< std::string >;
 	path = new std::deque< int >;
 
+	talkTextID = agk::CreateText("planetary");
+	agk::SetTextSize(talkTextID, 16);
+
+	talkSID = agk::CloneSprite(1);
+	agk::SetSpriteColor(talkSID, 150, 150, 150, 150);
+	agk::SetSpriteVisible(talkSID, 0);
+	agk::SetTextVisible(talkTextID, 0);
+
 	state = 0;
 }
 void NPC::update(World* world)
@@ -40,12 +48,12 @@ void NPC::update(World* world)
 
 		if(state == NPC_noState) //The character does not have anything to do, look for something
 		{
-			state = NPC_passiveState;
+			
 		}
 		else if(state == NPC_passiveState)
 		{
 			//Clearing the path
-			path->clear();
+			
 
 			//Finding somewhere to walk
 			//Gettingt the nodes that the NPC is currently standing on
@@ -54,6 +62,19 @@ void NPC::update(World* world)
 		{
 			
 		}
+
+		if(lastTalk + 4 < globaltime)
+		{
+			agk::SetSpriteVisible(talkSID, 0);
+			agk::SetTextVisible(talkTextID, 0);
+		}
+		float textWidth = agk::GetTextTotalWidth(talkTextID);
+		float textHeight = agk::GetTextTotalHeight(talkTextID);
+		agk::SetTextPosition(talkTextID, x - textWidth / 2, y - 150);
+		agk::SetSpritePosition(talkSID, x - textWidth / 2 - 5, y - 153);
+		agk::SetSpriteScale(talkSID, textWidth + 10, textHeight + 6);
+
+		agk::Print(agk::GetSpriteY(talkSID));
 
 		LuaHandler::runScript(updateScript);
 	}
@@ -218,140 +239,30 @@ void NPC::addFlag(std::string name, int value)
 	flags.push_back(tempFlag);
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-void OldCharacter::create(std::string colSprite)
+bool NPC::hasPath()
 {
-	this->colimgID = agk::LoadImage(colSprite.data());
-
-	this->colSID = agk::CreateSprite(colimgID);
-
-	//Temporary scale
-	colScale = .04f;
-	scaleX = colScale;
-	scaleY = colScale;
-	agk::SetSpriteScale(colSID, scaleX, scaleY);
-
-	//Setting physics properties
-	agk::SetSpritePhysicsOn(colSID, 2);
-
-	agk::SetSpriteShape(colSID, 3);
-	agk::SetSpritePhysicsFriction(colSID, 1.0f);
-	agk::SetSpritePhysicsRestitution(colSID, 0);
-	agk::SetSpritePhysicsMass(colSID, 0.1f);
-	agk::SetSpriteDepth(colSID, 15);
-
-	//Preventing collisioin between this and other characters
-	agk::SetSpriteCategoryBit(colSID, 1, 0);
-	agk::SetSpriteCategoryBit(colSID, GF_charGroup, 1);
-	agk::SetSpriteCollideBit(colSID, GF_charGroup, 0);
-
-	jumpHeight = 3;
-	cSpeed = 1.0f;
-}
-void OldCharacter::update(World* world)
-{
-	//Preventing the collision sprite from falling over
-	agk::SetSpriteAngle(colSID, 0);
-
-	isOnGround = checkOnGround(world);
-
-	//Updating the position of the sprite
-	x = agk::GetSpriteXByOffset(colSID);
-	y = agk::GetSpriteYByOffset(colSID);
-
-	//Making sure that the left/right speed is not to big
-	float chkSpeed = 15.0f * cSpeed;
-	if(agk::GetSpritePhysicsVelocityX(colSID) > chkSpeed)
+	if(cPath.size() > 0)
 	{
-		agk::SetSpritePhysicsVelocity(colSID, chkSpeed, agk::GetSpritePhysicsVelocityY(colSID));
+		return true;
 	}
-	if(agk::GetSpritePhysicsVelocityX(colSID) < -chkSpeed)
+	return false;
+}
+void NPC::setPath(std::vector<PathLink*>* cPath)
+{
+	if(cPath != NULL)
 	{
-		agk::SetSpritePhysicsVelocity(colSID, -chkSpeed, agk::GetSpritePhysicsVelocityY(colSID));
+		this->cPath = *cPath;
 	}
 }
 
-void OldCharacter::setPosition(float x, float y)
+void NPC::say(std::string msg)
 {
-	this->x = x;
-	this->y = y;
+	agk::SetTextString(talkTextID, msg.data());
 
-	agk::SetSpritePosition(colSID, x, y);
-}
+	agk::SetSpriteVisible(talkSID, 1);
+	agk::SetTextVisible(talkTextID, 1);
 
-float OldCharacter::getX()
-{
-	return x;
-}
-float OldCharacter::getY()
-{
-	return y;
-}
-float OldCharacter::getFeetY()
-{
-	//Getting the height of the colision sprite
-
-	float height = agk::GetImageHeight(colimgID) * scaleY;
-	float feetY = y + height/2.0f + 0.2f;
-	return feetY;
-}
-float OldCharacter::getFeetX()
-{
-	return x;
-}
-
-void OldCharacter::jump()
-{
-	if(isOnGround && globaltime > lastJump + 0.1) //Checking if the player can jump
-	{
-		agk::SetSpritePhysicsImpulse(colSID, x, y, 0, -jumpHeight);
-
-		lastJump = globaltime;
-	}
-}
-void OldCharacter::walkLeft()
-{
-	float moveForce = 30.0f;
-	//agk::SetSpritePhysicsImpulse(SID, x, y, -0.5f, 0);
-	agk::SetSpritePhysicsForce(colSID, x, y, -moveForce, 0);
-
-	cSpeed = 0.5f;
-}
-void OldCharacter::walkRight()
-{
-	float moveForce = 30.0f;
-	agk::SetSpritePhysicsForce(colSID, x, y, moveForce, 0);
-
-	cSpeed = 0.5f;
-}
-
-bool OldCharacter::checkOnGround(World* world)
-{
-	bool canJump = false;
-	//Calculating the height of the sprite
-	float plrWidth = agk::GetImageWidth(colimgID) * colScale;
-	float plrHeight = agk::GetImageHeight(colimgID) * colScale;
-
-	for(int i = 0; i < world->getPartAmount(); i++)
-	{
-		int physState = world->getPartPhysState(i);
-		if(physState != 0) //making sure that the sprite is setup for physics and part of the world
-		{
-			//Checking if the lower part of the sprite is coliding with anything
-			int wID = world->getPartSID(i);
-			for(float xChk = -0.5f; xChk < 0.5f; xChk = xChk + 0.1f)
-			{
-				if(agk::GetSpriteHitTest(wID, x+ xChk, y + (plrHeight / 2) + 0.5f) == 1)
-				{
-					canJump = true; //Looks like the character can jump
-				}
-			}
-		}
-	}
-
-	return canJump; //Returning the result
+	lastTalk = globaltime;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -19,45 +19,6 @@
 #include "Player.h"
 #include "Character.h"
 
-class OldCharacter
-{
-public:
-	void create(std::string colSprite);
-	void update(World* world);
-
-	bool checkOnGround(World* world);
-
-	//These functions should be called if the character should do something
-	void jump();
-	void walkLeft();
-	void walkRight();
-
-	void setPosition(float x, float y);
-
-	float getX();
-	float getY();
-	float getFeetY();
-	float getFeetX();
-private:
-	int SID;
-	int colSID;
-	int colimgID;
-
-	float x;
-	float y;
-
-	float scaleX;
-	float scaleY;
-
-	float colScale;
-
-	float lastJump;
-	float jumpHeight;
-	bool isOnGround;
-
-	float cSpeed;
-};
-
 class Waypoint
 {
 public:
@@ -108,6 +69,11 @@ public:
 	//bool findPathToGoal(World* world);
 
 	//NodeLink findClosestNodes(World* world);
+
+	bool hasPath();
+	void setPath(std::vector<PathLink*>* cPath);
+
+	void say(std::string msg);
 private:
 	bool exists;
 
@@ -133,6 +99,12 @@ private:
 	std::string conversationScript;
 
 	std::vector< Flag > flags;
+
+	std::vector<PathLink*> cPath;
+
+	int talkTextID;
+	int talkSID;
+	float lastTalk; ///The last time the talktext was updated
 };
 
 class listElement

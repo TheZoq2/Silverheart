@@ -67,6 +67,7 @@ void World::load(std::string filename)
 				int usable = 0;
 				std::string useScript = "";
 				std::string useMsg = "";
+				int platform = 0;
 
 				std::string name;
 
@@ -137,6 +138,10 @@ void World::load(std::string filename)
 						else if(dataType.compare("useMsg") == 0)
 						{
 							useMsg = dataValue;
+						}
+						else if(dataType.compare("platform") == 0)
+						{
+
 						}
 						else
 						{
@@ -284,6 +289,16 @@ void World::load(std::string filename)
 						tempLink.create(vecID, node0, node1, type);
 						links->push_back(tempLink);
 					}
+
+					//Going thru all the links and adding them to the nodes that they connect
+					for(unsigned int i = 0; i < links->size(); i++)
+					{
+						PathNode* node0 = findNodeById(links->at(i).getNodeID(0));
+						PathNode* node1 = findNodeById(links->at(i).getNodeID(1));
+
+						node0->addLink(links->at(i).getID());
+						node1->addLink(links->at(i).getID());
+					}
 				}
 			}
 		}
@@ -314,26 +329,11 @@ void World::update(float playerX, float playerY)
 			cPart->update();
 		}
 	}
+
+	displayNodes();
 }
 void World::clear()
 {
-	/*//Removing the background
-	if(agk::GetSpriteExists(skyID))
-	{
-		agk::DeleteSprite(skyID);
-	}
-
-	//Removing the clouds
-	for(unsigned int i = 0; i < clouds->size(); i++)
-	{
-		if(agk::GetSpriteExists(clouds->at(i).SID))
-		{
-			agk::DeleteSprite(clouds->at(i).SID);
-		}
-	}
-	//Clearing the cloud vector
-	clouds->clear();*/
-
 	//Remvoving the background
 	agk::DeleteObject(skyID);
 
@@ -344,22 +344,11 @@ void World::clear()
 
 	part->clear();
 	partsToUpdate->clear();
-	/*
-	//Removing stars
-	for(unsigned int i = 0; i < stars->size(); i++)
-	{
-		if(agk::GetSpriteExists(stars->at(i).SID))
-		{
-			agk::DeleteSprite(stars->at(i).SID);
-		}
-	}
-
-	stars->clear();*/
 }
 
 void World::loadBG()
 {
-	overcast = 0.75;
+	overcast = 0.5;
 	overcastTarget = overcast;
 
 	skyID = agk::CreateObjectPlane(100, 100);
@@ -1096,15 +1085,6 @@ int World::getPhysicsCollision(int sensor)
 	return result;
 }
 
-/*int World::getEntryAmount()
-{
-	return entry->size();
-}
-//World::Entry* World::getEntry(int entryID)
-{
-	return &entry->at(entryID);
-}*/
-
 std::string World::getName()
 {
 	return name;
@@ -1215,6 +1195,17 @@ PathNode* World::findNodeById(int ID)
 
 	return NULL;
 }
+PathLink* World::findLinkById(int ID)
+{
+	for(unsigned int i = 0; i < links->size(); i++)
+	{
+		if(links->at(i).getID() == ID)
+		{
+			return &links->at(i);
+		}
+	}
+	return NULL;
+}
 void World::displayNodes()
 {
 	for(unsigned int i = 0; i < links->size(); i++)
@@ -1230,9 +1221,214 @@ void World::displayNodes()
 			float y1 = agk::WorldToScreenY(node0->getY());
 			float y2 = agk::WorldToScreenY(node1->getY());
 
-			agk::DrawLine(x1, y1, x2, y2, 255, 0, 0);
+			int r = 255;
+			int g = 0;
+			int b = 0;
+
+			if(links->at(i).getType() == 1)
+			{
+				r = 0;
+				g = 255;
+				b = 0;
+			}
+			agk::DrawLine(x1, y1, x2, y2, r, g ,b );
 		}
 	}
+}
+PathLink* World::findClosestLink(float x, float y)
+{
+	float delta = 2;
+	//Going thru all of the nodes
+	float lowestDist = 10000000;
+	PathLink* result = NULL;
+
+	for(unsigned int i = 0; i < links->size(); i++)
+	{
+		PathNode* node0 = findNodeById(links->at(i).getNodeID(0));
+		PathNode* node1 = findNodeById(links->at(i).getNodeID(1));
+
+		//Finding the lowset X position
+		float beginX = node0->getX();
+		float endX = node1->getX();
+		float beginY = node0->getY();
+		float endY = node1->getY();
+
+		//Making sure begin < end
+		if(endX < beginX)
+		{
+			float buff = endX;
+			endX = beginX;
+			beginX = buff;
+		}
+		if(endY < beginY)
+		{
+			float buff = endY;
+			endY = beginY;
+			beginY = buff;
+		}
+
+		float distX = endX - beginX;
+		float distY = endY - beginY;
+		float distRatio = distY / distX;
+
+		for(float pX = beginX; pX < endX; pX += 2.0f)
+		{
+			float xPos = pX - beginX;
+			float yPos = xPos * distRatio;
+
+			//Calculating the position of the point on the line
+			float pY = beginY + yPos;
+			
+			//Calculating the distance of the point from the 'target' point
+			float pDistX = pX - x;
+			float pDistY = pY - y;
+			float pDist = sqrt(pow(pDistX, 2) + pow(pDistY, 2));
+
+			//This point is closer
+			if(pDist < lowestDist)
+			{
+				lowestDist = pDist;
+
+				result = &links->at(i);
+			}
+		}
+	}
+
+	return result;
+}
+std::vector<PathLink*>* World::getPath(float startX, float startY, float endX, float endY)
+{
+	int nextID = 0;
+	struct ListNode
+	{
+		int ID;
+
+		PathLink* link;
+		int parent;
+	};
+
+	std::vector<PathLink*>* result = new std::vector<PathLink*>;
+	//Finding the start and end link
+	ListNode startLink;
+	startLink.link = findClosestLink(startX, startY);
+	startLink.parent = -1;
+	ListNode endLink;
+	endLink.link= findClosestLink(endX, endY);
+
+	std::deque< ListNode > openList;
+	std::deque< ListNode > closedList;
+	openList.push_back(startLink);
+
+	while(openList.size() > 0)
+	{
+		//Getting the nodes connected by the link
+		PathNode* nodes[2];
+		nodes[0] = findNodeById(openList.at(0).link->getNodeID(0));
+		nodes[1] = findNodeById(openList.at(0).link->getNodeID(1));
+
+		for(unsigned int i = 0; i < 2; i++)
+		{
+			std::vector<int>* linkID = nodes[i]->getLinks();
+
+			for(unsigned int l = 0; l < linkID->size(); l++)
+			{
+				//Checking if the links are already on the open list
+				bool onList = false;
+				for(unsigned int o = 0; o < openList.size(); o++)
+				{
+					if(openList.at(o).link->getID() == linkID->at(l))
+					{
+						onList = true;
+					}
+				}
+				for(unsigned int c = 0; c < closedList.size(); c++)
+				{
+					if(closedList.at(c).link->getID() == linkID->at(l))
+					{
+						onList = true;
+					}
+				}
+
+				if(onList == false) //It wasn't on the list already
+				{
+					ListNode tempNode;
+					tempNode.link = findLinkById(linkID->at(l));
+					tempNode.parent = openList.at(0).ID;
+					tempNode.ID = nextID;
+					openList.push_back(tempNode);
+					//openList.push_back(findLinkById(linkID->at(l)));
+					nextID++;
+				}
+			}
+		}
+		//Adding the link to the closed list
+		closedList.push_back(openList.at(0));
+		openList.pop_front();
+
+		//Checking if the target has been found
+		if(closedList.back().link->getID() == endLink.link->getID())
+		{
+			break;
+		}
+	}
+	//If the goal wasn't found
+	if(closedList.back().link->getID() != endLink.link->getID())
+	{
+		delete result; //Cleaning up
+		return NULL;
+	}
+	
+	//Backtracking the path to find the start and create a path
+	bool pathSaved = false; //True if the path has been found
+	bool pathSaving = true;//True while the path is being saved
+	//Adding the end node to the path
+	std::vector<ListNode> resultPath;
+	resultPath.push_back(closedList.back());
+	while(pathSaving == true)
+	{
+		//Getting the parent of the current node
+		int parentID = resultPath.back().parent;
+
+		if(parentID == -1) //The first node has been found
+		{
+			pathSaved = true;
+			break;
+		}
+
+		//Finding the link with the ID
+		bool foundParent = false;;
+		for(unsigned int i = 0; i < closedList.size(); i++)
+		{
+			if(closedList.at(i).ID == parentID)
+			{
+				//Add the link to the path
+				resultPath.push_back(closedList.at(i));
+					
+				foundParent = true;
+				//Exit the loop
+				break;
+			}
+		}
+
+		if(foundParent == false)
+		{
+			pathSaving = false;
+			pathSaved = false;
+		}
+	}
+
+	if(pathSaved == false)
+	{
+		return NULL;
+	}
+
+	//The path has been tracked, save it
+	for(unsigned int i = 0; i < resultPath.size(); i++)
+	{
+		result->push_back(resultPath.at(i).link);
+	}
+
+	return result;
 }
 
 /////////////////////////////////////////////////////////
@@ -1243,6 +1439,11 @@ void PathNode::create(int vecID, float x, float y)
 	this->x = x;
 	this->y = y;
 	this->vecID = vecID;
+}
+
+void PathNode::addLink(int ID)
+{
+	this->links.push_back(ID);
 }
 
 int PathNode::getVecID()
@@ -1256,6 +1457,10 @@ float PathNode::getX()
 float PathNode::getY()
 {
 	return y;
+}
+std::vector<int>* PathNode::getLinks()
+{
+	return &links;
 }
 
 /////////////////////////////////////////////////////////
@@ -1272,4 +1477,13 @@ void PathLink::create(int vecID, int node0, int node1, int type)
 int PathLink::getNodeID(int index)
 {
 	return nodes[index];
+}
+
+int PathLink::getType()
+{
+	return type;
+}
+int PathLink::getID()
+{
+	return vecID;
 }

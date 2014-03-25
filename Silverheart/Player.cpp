@@ -133,6 +133,12 @@ void Player::update()
 	cameraY = y - (agk::GetVirtualHeight() / agk::GetViewZoom() / 2);
 
 	agk::SetViewOffset(cameraX, cameraY);
+
+	PathLink* closestLink = this->world->findClosestLink(x, y);
+	if(closestLink != NULL)
+	{
+		agk::Print(closestLink->getID());
+	}
 }
 void Player::updateWeapon(ProjectileGroup* projGroup)
 {

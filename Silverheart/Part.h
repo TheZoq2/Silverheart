@@ -37,6 +37,8 @@ public:
 	void setTarget(float targetX, float targetY);
 	void setSpeed(float speed);
 	void setDrawPos(float x, float y);//Sets the position of the sprite but not the x/y variables, will cause issues
+	void setScissorToCurrent(); //Sets the sprite scissor to the current bounds of the sprite
+	void setPlatform(int platform);
 
 	std::string getName();
 	int getUsable();
@@ -58,6 +60,7 @@ private:
 	float scaleX;
 	float scaleY;
 	float angle;
+	int platform; //True if the part is a "platform"
 
 	std::string name;
 	int usable;

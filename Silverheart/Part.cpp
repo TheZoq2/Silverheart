@@ -65,6 +65,7 @@ void Part::setPosition(float x, float y)
 	agk::SetSpritePositionByOffset(SID, x, y);
 }
 
+
 void Part::remove()
 {
 	if(agk::GetSpriteExists(SID))
@@ -130,6 +131,28 @@ void Part::setSpeed(float speed)
 void Part::setDrawPos(float x, float y)
 {
 	agk::SetSpritePositionByOffset(SID, x, y);
+}
+void Part::setScissorToCurrent()
+{
+	//Getting the current bounds of the sprite
+	float x1 = agk::GetSpriteX(SID);
+	float y1 = agk::GetSpriteY(SID);
+	
+	int imgID = agk::GetSpriteImageID(SID);
+	float imgHeight = agk::GetImageHeight(imgID);
+	float imgWidth = agk::GetImageWidth(imgID);
+	
+	float sWidth = imgWidth * scaleX;
+	float sHeight = imgHeight * scaleY;
+
+	float x2 = x1 + sWidth;
+	float y2 = y1 + sHeight;
+
+	agk::SetSpriteScissor(SID, x1, y1, x2, y2);
+}
+void Part::setPlatform(int platform)
+{
+	this->platform = platform;
 }
 
 std::string Part::getActScript()

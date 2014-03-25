@@ -17,14 +17,19 @@ class PathNode
 public:
 	void create(int vecID, float x, float y);
 
+	void addLink(int ID);
+
 	int getVecID();
 	float getX();
 	float getY();
+	std::vector<int>* getLinks();
 private:
 	float x;
 	float y;
 
 	int vecID;
+
+	std::vector<int> links;
 };
 class PathLink
 {
@@ -32,6 +37,9 @@ public:
 	void create(int vecID, int node0, int node1, int type);
 
 	int getNodeID(int index);
+
+	int getType();
+	int getID();
 private:
 	int vecID;
 
@@ -121,7 +129,8 @@ public:
 	unsigned int getNodeAmount();
 	PathNode* findNodeById(int ID);
 	PathLink* findLinkById(int ID);
-
+	PathLink* findClosestLink(float x, float y);
+	std::vector<PathLink*>* getPath(float startX, float startY, float endX, float endY);
 
 	void addPartToUpdate(Part* part);
 private:

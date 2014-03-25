@@ -26,6 +26,7 @@ public:
 	void incDepth(int amount);
 	void setDepth(int depth);
 	void setData(std::string name);
+	void setColor(int colorR, int colorG, int colorB, int colorA);
 
 	bool isHit(float xChk, float yChk);
 
@@ -62,6 +63,11 @@ private:
 
 	int depth;
 	int physState;
+
+	int colorR;
+	int colorG;
+	int colorB;
+	int colorA;
 
 	std::string data;
 };

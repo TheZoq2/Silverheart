@@ -81,6 +81,11 @@ public:
 	void removeSelected();
 
 	void toggleSnapping();
+
+	void copy();
+	void paste(float x, float y);
+
+	void resetZoom();
 private:
 	void readNodeGroup(std::string group);
 	void readLinkGroup(std::string group);
@@ -114,5 +119,8 @@ private:
 	int lastSelNode;
 
 	bool snapping;
+
+	//Part* clipboard;
+	int clipboard;
 };
 

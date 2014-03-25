@@ -14,8 +14,6 @@ Particle::~Particle(void)
 void Particle::setup()
 {
 	colorFrame = new std::vector< Keyframe >;
-
-
 }
 void Particle::update()
 {

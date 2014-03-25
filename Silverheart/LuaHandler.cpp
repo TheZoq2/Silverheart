@@ -185,6 +185,23 @@ int LUA_getPartByName(lua_State* L)
 
 	return 0;
 }
+int LUA_scissorPart(lua_State* L)
+{
+	std::string name = lua_tostring(L, 1);
+	Part* part = l_defaultWorld->getPartFromName(name);
+
+	if(part != NULL)
+	{
+		part->setScissorToCurrent();
+	}
+	else
+	{
+		DebugConsole::addC("Failed to set sprite scissor -- sprite: ");DebugConsole::addC(name);
+		DebugConsole::addToLog(" did not exist");
+	}
+
+	return 0;
+}
 
 //NPCs
 NPCGroup* l_defaultNPCgroup;
@@ -291,6 +308,36 @@ int LUA_setNPCFlagValue(lua_State* L)
 		DebugConsole::addToLog(" did not exist");
 		return 0;
 	}
+
+	return 0;
+}
+int LUA_npcSay(lua_State* L)
+{
+	NPC* p = (NPC*) lua_touserdata(L, 1);
+	std::string msg = lua_tostring(L, 2);
+
+	p->say(msg);
+
+	return 0;
+}
+
+int LUA_getNPCHasPath(lua_State* L)
+{
+	NPC* p = (NPC*) lua_touserdata(L, 1);
+
+	lua_pushboolean(L, p->hasPath());
+
+	return 1;
+}
+int LUA_NPCFindPath(lua_State* L)
+{
+	NPC* p = (NPC*) lua_touserdata(L, 1); //The NPC that should move
+	float x = lua_tonumber(L, 2); //The target
+	float y = lua_tonumber(L, 3); //The target
+
+	std::vector<PathLink*>* path = l_defaultWorld->getPath(p->getX(), p->getY(), x, y);
+
+	p->setPath(path);
 
 	return 0;
 }
@@ -429,15 +476,18 @@ void LuaHandler::setupLua()
 	registerFunction("getLabelValue", LUA_getPartLabelValue);
 	registerFunction("movePartToPart", LUA_movePartToPart);
 	registerFunction("getPartByName", LUA_getPartByName);
+	registerFunction("scissorPart", LUA_scissorPart);
 
 	registerFunction("createNPC", LUA_loadNPC);
 	registerFunction("getCurrentNPC", LUA_getCurrentNPC);
 	registerFunction("getNPCPosition", LUA_getNPCPos);
-
+	registerFunction("findNPCPath", LUA_NPCFindPath);
+	registerFunction("getNPCHasPath", LUA_getNPCHasPath);
 	registerFunction("addNPCFlag", LUA_addNPCFlag);
 	registerFunction("getNPCFlagExists", LUA_getNPCFlagExists);
 	registerFunction("getNPCFlagValue", LUA_getNPCFlagValue);
 	registerFunction("setNPCFlagValue", LUA_setNPCFlagValue);
+	registerFunction("npcSay", LUA_npcSay);
 
 	registerFunction("addUIWindow", LUA_addUIWindow);
 	registerFunction("removeWindow", LUA_removeWindow);

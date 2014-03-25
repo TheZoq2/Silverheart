@@ -28,7 +28,7 @@
 #include <vector>
 #include <string>
 
-#define DEVICE_BIG
+//#define DEVICE_BIG
 
 #ifdef DEVICE_BIG
 	#define DEVICE_WIDTH 1600
