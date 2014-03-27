@@ -117,6 +117,22 @@ void Character::setImpulse(float cX, float cY, float iX, float iY)
 	agk::SetSpritePhysicsImpulse(body, cX, cY, iX, iY);
 }
 
+void Character::capYVelocity(float max, float min)
+{
+	if(agk::GetSpritePhysicsVelocityY(body) > max)
+	{
+		agk::SetSpritePhysicsVelocity(body, agk::GetSpritePhysicsVelocityX(body), max);
+	}
+	if(agk::GetSpritePhysicsVelocityY(body) < min)
+	{
+		agk::SetSpritePhysicsVelocity(body, agk::GetSpritePhysicsVelocityX(body), min);
+	}
+}
+void Character::setVelocityY(float speed)
+{
+	agk::SetSpritePhysicsVelocity(body, agk::GetSpritePhysicsVelocityY(body), speed);
+}
+
 float Character::getX()
 {
 	return this->x;
@@ -124,4 +140,12 @@ float Character::getX()
 float Character::getY()
 {
 	return this->y;
+}
+float Character::getFeetX()
+{
+	return agk::GetSpriteXByOffset(sensor);
+}
+float Character::getFeetY()
+{
+	return agk::GetSpriteYByOffset(sensor);
 }

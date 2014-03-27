@@ -79,6 +79,7 @@ public:
 	void loadBaseMedia();
 	void load(std::string name);
 	void update(float playerX, float playerY);
+	void updatePlrFeet(float plrFeetX, float plrFeetY);
 	void clear();
 	void generateBackgroundTextures();
 
@@ -106,6 +107,7 @@ public:
 	float getBottomEdge();
 	int getLastActive();
 
+	bool isLadder(float x, float y);
 	bool isGround(float x, float y);
 	int getPhysicsCollision(int sensor);
 	

@@ -46,6 +46,10 @@ void Part::setPhysState(int physState)
 			agk::SetSpritePhysicsFriction(SID, 0.8f);
 		}
 	}
+	else
+	{
+		agk::SetSpritePhysicsOff(SID);
+	}
 
 	//Also giving it a shape
 	agk::SetSpriteShape(SID, 3);
@@ -64,7 +68,6 @@ void Part::setPosition(float x, float y)
 
 	agk::SetSpritePositionByOffset(SID, x, y);
 }
-
 
 void Part::remove()
 {
@@ -154,6 +157,10 @@ void Part::setPlatform(int platform)
 {
 	this->platform = platform;
 }
+void Part::setLadder(int ladder)
+{
+	this->ladder = ladder;
+}
 
 std::string Part::getActScript()
 {
@@ -191,6 +198,14 @@ float Part::getEdgeRadius()
 	float diameter = sqrt(pow(xSize,2) + pow(ySize,2));
 
 	return diameter/2;
+}
+int Part::getPlatform()
+{
+	return platform;
+}
+int Part::getLadder()
+{
+	return ladder;
 }
 
 void Part::update()

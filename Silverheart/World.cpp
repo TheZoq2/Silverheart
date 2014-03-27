@@ -68,6 +68,7 @@ void World::load(std::string filename)
 				std::string useScript = "";
 				std::string useMsg = "";
 				int platform = 0;
+				int ladder = 0;
 
 				std::string name;
 
@@ -141,7 +142,11 @@ void World::load(std::string filename)
 						}
 						else if(dataType.compare("platform") == 0)
 						{
-
+							platform = atoi(dataValue.data());
+						}
+						else if(dataType.compare("ladder") == 0)
+						{
+							ladder = atoi(dataValue.data());
 						}
 						else
 						{
@@ -187,6 +192,9 @@ void World::load(std::string filename)
 				tempPart.setActScript(useScript.data());
 				tempPart.setUsable(usable);
 				tempPart.setUseMsg(useMsg.data());
+
+				tempPart.setPlatform(platform);
+				tempPart.setLadder(ladder);
 
 				this->part->push_back(tempPart);
 				
@@ -331,6 +339,24 @@ void World::update(float playerX, float playerY)
 	}
 
 	displayNodes();
+}
+void World::updatePlrFeet(float plrFeetX, float plrFeetY)
+{
+	//Going thru all the parts that are platforms
+	for(unsigned int i = 0; i < part->size(); i++)
+	{
+		if(part->at(i).getPlatform())
+		{
+			if(part->at(i).getY() < plrFeetY)
+			{
+				part->at(i).setPhysState(0);
+			}
+			else
+			{
+				part->at(i).setPhysState(2);
+			}
+		}
+	}
 }
 void World::clear()
 {
@@ -1052,6 +1078,25 @@ int World::getLastActive()
 	return lastActive;
 }
 
+bool World::isLadder(float x, float y)
+{
+	bool result = false;
+	for(unsigned int i = 0; i < part->size(); i++)
+	{
+		if(part->at(i).getLadder() == 1) //If the part is a ladder
+		{
+			//Checking for collision with the part
+			if(part->at(i).getHit(x, y))
+			{
+				result = true;
+
+				break; //Exit the loop since nothing matters anymore
+			}
+		}
+	}
+
+	return result;
+}
 bool World::isGround(float x, float y)
 {
 	bool isGround = false;

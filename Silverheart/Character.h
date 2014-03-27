@@ -17,13 +17,19 @@ public:
 	void jump(float force);
 
 	bool checkOnGround(World* world);
+	void setClimbing(bool climbing);
 
 	void setSprite(int SID);
 	void setPosition(float x, float y);
 	void setImpulse(float centerX, float centerY, float iX, float iY);
 
+	void capYVelocity(float max, float min);
+	void setVelocityY(float speed);
+
 	float getX();
 	float getY();
+	float getFeetX();
+	float getFeetY();
 private:
 	int SID;
 
@@ -39,5 +45,7 @@ private:
 
 	float sizeX;
 	float sizeY;
+
+	bool climbing;
 };
 

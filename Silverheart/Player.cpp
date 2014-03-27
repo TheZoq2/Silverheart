@@ -97,20 +97,33 @@ void Player::setPosition(float x, float y)
 
 void Player::update()
 {
+	float maxLadderSpeed = 140;
+
 	//Movement
 
 	chr.update();
 	this->x = chr.getX();
 	this->y = chr.getY();
 
+	//Ladders
+	bool isLadder = false;
+	if(world->isLadder(chr.getFeetX(), chr.getFeetY()))
+	{
+		isLadder = true;
+	}
+
 	//Jump
-	if(Input::up() && lastJump + 0.1f < globaltime)
+	if(Input::up() && (lastJump + 0.1f < globaltime || isLadder == true))
 	{
 		if(chr.checkOnGround(world))
 		{
 			chr.jump(-1500);
 
 			lastJump = globaltime;
+		}
+		if(isLadder)
+		{
+			chr.setVelocityY(-maxLadderSpeed);
 		}
 	}
 
@@ -138,6 +151,14 @@ void Player::update()
 	if(closestLink != NULL)
 	{
 		agk::Print(closestLink->getID());
+	}
+
+	//Updating platforms
+	world->updatePlrFeet(chr.getFeetX(), chr.getFeetY());
+
+	if(isLadder == true)
+	{
+		chr.capYVelocity(maxLadderSpeed, -maxLadderSpeed);
 	}
 }
 void Player::updateWeapon(ProjectileGroup* projGroup)

@@ -39,6 +39,7 @@ public:
 	void setDrawPos(float x, float y);//Sets the position of the sprite but not the x/y variables, will cause issues
 	void setScissorToCurrent(); //Sets the sprite scissor to the current bounds of the sprite
 	void setPlatform(int platform);
+	void setLadder(int ladder);
 
 	std::string getName();
 	int getUsable();
@@ -47,6 +48,8 @@ public:
 	std::string getLabel(int slot);
 	bool getHit(float x, float y);
 	float getEdgeRadius();
+	int getPlatform();
+	int getLadder();
 
 	void addOperation(std::string operation);
 private:
@@ -61,6 +64,7 @@ private:
 	float scaleY;
 	float angle;
 	int platform; //True if the part is a "platform"
+	int ladder; //1 if the part is a ladder
 
 	std::string name;
 	int usable;

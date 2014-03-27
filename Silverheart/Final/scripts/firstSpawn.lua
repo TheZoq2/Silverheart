@@ -1,4 +1,4 @@
 --Spawning the player
-loadNewLevel("platformTest")
+loadNewLevel("laddertest")
 playerSpawnAt("spawn1")
 setPlayerWeapon("data/Weapons/GL")
