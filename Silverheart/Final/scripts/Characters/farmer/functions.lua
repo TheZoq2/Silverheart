@@ -18,31 +18,21 @@ function greet()
 	else
 		setNPCFlagValue(talkingTo, "met", 1)
 		setNPCFlagValue(talkingTo, "plrRelation", 5)
+		npcSay(talkingTo, "Good evening!")
 
 		reloadDialogue()
 	end
 end
 
-function instantLike()
-	if(talkingTo == nil) then
-	else
-		setNPCFlagValue(talkingTo, "plrRelation", getNPCFlagValue(talkingTo, "plrRelation") + 100);
+function awnserLocation()
+	npcSay(talkingTo, "You are in our secret lab")
 
-		reloadDialogue()
-	end
+	setNPCFlagValue(talkingTo, "whereStage", 1)
+
+	printToConsole(tostring(getNPCFlagValue(talkingTo, "whereStage")))
 end
+function awnserLab()
+	npcSay(talkingTo, "Oh, this is where we produce supersoldiers like you")
 
-function instantHate()
-	if(talkingTo == nil) then
-	else
-		setNPCFlagValue(talkingTo, "plrRelation", getNPCFlagValue(talkingTo, "plrRelation") - 100);
-
-		reloadDialogue()
-	end
-end
-
-function bribe()
-	speed = 2 -- The speed that the part should move at
-
-	movePartToPart("door", "door1Target", speed)
+	setNPCFlagValue(talkingTo, "whereStage", 2)
 end

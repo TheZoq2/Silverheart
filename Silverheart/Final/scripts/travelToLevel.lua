@@ -1,10 +1,9 @@
--- Getting the part that was most likley activated to run this
-lastActive = getLastActivePart()
+part = getLastActivePart()
 
--- Getting the labels
-levelName = getLabelValue(lastActive, 0)
-spawnPoint = getLabelValue(lastActive, 1)
+targetLevel = getLabelValue(part, 0)
+targetPart = getLabelValue(part, 1)
 
-loadNewLevel(levelName)
-movePlayerToPart(spawnPoint)
+loadNewLevel(targetLevel)
+movePlayerToPart(targetPart)
 
+printToConsole("Traveling")

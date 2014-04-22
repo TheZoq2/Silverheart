@@ -24,20 +24,6 @@ if(getNPCFlagExists(NPC, "continueConv") == false) then
 end
 
 
-mainState = getNPCFlagValue(NPC, "mainState")
-alertLevel = getNPCFlagValue(NPC, "alert")
-if mainState == 0 then -- The NPC has nothing to do
-	if alertLevel == 0 then
-		if(dist < 200) then
-			printToConsole("Found player")
-
-			--setNPCFlagValue(NPC, "alert", 1)
-		end
-	elseif(alertLevel == 1) then
-		 findNPCPath(NPC, plrX, plrY);
-	end
-end
-
 if(getNPCFlagValue(NPC, "continueConv") == 1) then
 	dofile("scripts/characters/farmer/dialogue.lua")
 end

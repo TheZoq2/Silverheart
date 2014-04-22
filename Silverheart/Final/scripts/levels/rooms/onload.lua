@@ -1,0 +1,3 @@
+setIndoors(true)
+
+talkingTo = nil

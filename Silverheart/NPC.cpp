@@ -197,6 +197,8 @@ void NPC::createFromName(std::string name)
 		//Telling the console that the file didin't exist
 		DebugConsole::addC("Failed to load character: ");DebugConsole::addC(name);DebugConsole::addC("  ---  ");DebugConsole::addToLog(filename);
 	}
+
+	this->name = name;
 }
 void NPC::setPosition(float x, float y)
 {
@@ -219,6 +221,10 @@ float NPC::getX()
 float NPC::getY()
 {
 	return chr.getY();
+}
+std::string NPC::getName()
+{
+	return name;
 }
 
 Flag* NPC::getFlag(std::string name)
@@ -341,6 +347,18 @@ NPC* NPCGroup::getNPC(unsigned int index)
 	if(index >= 0 && index < npc->size())
 	{
 		return &npc->at(index);
+	}
+
+	return NULL;
+}
+NPC* NPCGroup::getNPCByName(std::string name)
+{
+	for(unsigned int i = 0; i < npc->size(); i++)
+	{
+		if(npc->at(i).getName().compare(name) == 0)
+		{
+			return &npc->at(i);
+		}
 	}
 
 	return NULL;

@@ -231,10 +231,23 @@ int LUA_loadNPC(lua_State* L)
 	float xPos = part->getX();
 	float yPos = part->getY();
 
-	l_defaultNPCgroup->addNPCFromFile(NPCName.data(), xPos, yPos);
+	NPC* oldNPC = l_defaultNPCgroup->getNPCByName(NPCName);
 
-	//Passing a pointer to the object to lua
-	NPC* newNPC = l_defaultNPCgroup->getLastNPC();
+	NPC* newNPC = NULL;
+
+	//Checking if the NPC already exists
+	if(oldNPC == NULL)
+	{
+		l_defaultNPCgroup->addNPCFromFile(NPCName.data(), xPos, yPos);
+
+		//Passing a pointer to the object to lua
+		NPC* newNPC = l_defaultNPCgroup->getLastNPC();
+	}
+	else
+	{
+		newNPC = oldNPC;
+		newNPC->setPosition(xPos, yPos);
+	}
 
 	lua_pushlightuserdata(L, newNPC);
 
@@ -346,6 +359,26 @@ int LUA_NPCFindPath(lua_State* L)
 	std::vector<PathLink*>* path = l_defaultWorld->getPath(p->getX(), p->getY(), x, y);
 
 	p->setPath(path);
+
+	return 0;
+}
+int LUA_moveNPCToPart(lua_State* L)
+{
+	NPC* p = (NPC*) lua_touserdata(L, 1);
+	std::string partStr = lua_tostring(L, 2);
+
+	Part* part = l_defaultWorld->getPartFromName(partStr);
+
+	if(part != NULL)
+	{
+		p->setPosition(part->getX(), part->getY());
+	}
+	else
+	{
+		DebugConsole::addC("Failed to move NPC to part -- part ");
+		DebugConsole::addC(partStr);
+		DebugConsole::addToLog(" does not exist");
+	}
 
 	return 0;
 }

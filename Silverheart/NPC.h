@@ -62,6 +62,7 @@ public:
 
 	float getX();
 	float getY();
+	std::string getName();
 	
 	void addFlag(std::string name, int value);
 	Flag* getFlag(std::string name);
@@ -129,6 +130,8 @@ public:
 
 	void addNPCFromFile(std::string file);
 	void addNPCFromFile(std::string file, float x, float y);
+
+	NPC* getNPCByName(std::string name);
 
 	NPC* getLastNPC();
 

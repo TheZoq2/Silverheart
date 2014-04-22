@@ -1,5 +1,5 @@
 /*
-** $Id: lauxlib.c,v 1.248 2013/03/21 13:54:57 roberto Exp $
+** $Id: lauxlib.c,v 1.248.1.1 2013/04/12 18:48:47 roberto Exp $
 ** Auxiliary functions for building Lua libraries
 ** See Copyright Notice in lua.h
 */
@@ -640,8 +640,7 @@ LUALIB_API int luaL_loadfilex (lua_State *L, const char *filename,
   else {
     lua_pushfstring(L, "@%s", filename);
     lf.f = fopen(filename, "r");
-    if (lf.f == NULL)
-		return errfile(L, "open", fnameindex);
+    if (lf.f == NULL) return errfile(L, "open", fnameindex);
   }
   if (skipcomment(&lf, &c))  /* read initial portion */
     lf.buff[lf.n++] = '\n';  /* add line to correct line numbers */

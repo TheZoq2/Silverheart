@@ -1,6 +1,33 @@
 function addDialogueToList(windowName, listName, NPC)
 	talkingTo = NPC -- The NPC that is 
 
+	whereStageValue = getNPCFlagValue(NPC, "whereStage");
+	
+	--Creating flags
+	if(getNPCFlagExists(NPC, "met") == false) then
+		addNPCFlag(NPC, "met", 0)
+	end
+	if(getNPCFlagExists(NPC, "whereStage") == false) then
+		addNPCFlag(NPC, "whereStage", 0)
+	end
+
+	--Adding the dialogue options
+	if(getNPCFlagValue(NPC, "met") == 0) then
+		addOptionToList(windowName, listName, "Good afternoon!", "functions.lua", "greet");
+	end
+
+	if(getNPCFlagValue(NPC, "met") == 1) then
+		printToConsole(tostring(whereStageValue))
+
+		if (whereStageValue == 0) then
+			addOptionToList(windowName, listName, "Where am I?", "functions.lua", "awnserLocation");
+		else
+			addOptionToList(windowName, listName, "A lab?", "functions.lua", "awnserLab")
+		end
+	end
+
+	addOptionToList(windowName, listName, "Goodbye", "functions.lua", "quitDialogue")
+	--[[
 	-- Creating flags
 	if(getNPCFlagExists(NPC, "met") == false) then
 		addNPCFlag(NPC, "met", 0);
@@ -26,7 +53,7 @@ function addDialogueToList(windowName, listName, NPC)
 		end
 	end
 
-	addOptionToList(windowName, listName, "Goodbye", "functions.lua", "quitDialogue");
+	addOptionToList(windowName, listName, "Goodbye", "functions.lua", "quitDialogue");]]--
 end
 
 function addOptionToList(windowName, listName, option, script, func)
@@ -44,7 +71,7 @@ if(getNPCFlagValue(NPC, "hasUI") == 0) then
 
 		addUIWindow("DialogWindow", "1x1.png", 100, 250, 300, 100)
 		setUIWindowColor("DialogWindow", 100, 100, 100, 150)
-		addSimpleListToWindow("DialogWindow", "diaList", 5, 5, 240, 90, "Header")
+		addSimpleListToWindow("DialogWindow", "diaList", 5, 5, 240, 90, "Say:")
 		setListClickable("DialogWindow", "diaList", true)
 
 		addDialogueToList("DialogWindow", "diaList", NPC);
