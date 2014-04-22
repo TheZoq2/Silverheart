@@ -70,6 +70,8 @@ public:
 	void setColor(int r, int g, int b, int a);
 	void highlight(int r, int g, int b);
 
+	void moveY(float amount);
+
 	std::string getImage();
 	std::string getValue();
 private:

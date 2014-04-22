@@ -18,6 +18,7 @@ void Character::create(float sizeX, float sizeY)
 	agk::SetSpritePhysicsOn(body, 2);
 	agk::SetSpritePhysicsFriction(body, 0);
 	agk::SetSpritePhysicsCanRotate(body, 0);
+	agk::SetSpriteDepth(body, GF_BaseDepth);
 
 	leg = agk::CloneSprite(1);
 	agk::SetSpriteScale(leg, sizeX / 1.4f, sizeX / 1.4f);

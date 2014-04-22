@@ -953,6 +953,15 @@ void ImgList::updateInput(float mx, float my)
 			item->highlight(100, 100, 255);
 		}
 	}
+
+	//scrolling the menu
+	if(Input::scrollAmount() != 0)
+	{
+		for(unsigned int i = 0; i < listItems->size(); i++)
+		{
+			listItems->at(i).moveY(Input::scrollAmount() * 5);
+		}
+	}
 }
 void ImgList::remove()
 {
@@ -1098,6 +1107,14 @@ std::string ImgListItem::getValue()
 {
 	return this->value;
 }
+
+void ImgListItem::moveY(float amount)
+{
+	this->y = y + amount;
+	
+	agk::SetSpritePosition(SID, x, y);
+}
+
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 void Button::createColorButton(std::string vecID, float x, float y, float width, float height, std::string text)

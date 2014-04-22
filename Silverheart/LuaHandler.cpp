@@ -202,6 +202,14 @@ int LUA_scissorPart(lua_State* L)
 
 	return 0;
 }
+int LUA_setIndoors(lua_State* L)
+{
+	bool indoors = lua_toboolean(L, 1);
+
+	l_defaultWorld->setIndoors(indoors);
+
+	return 0;
+}
 
 //NPCs
 NPCGroup* l_defaultNPCgroup;
@@ -477,6 +485,7 @@ void LuaHandler::setupLua()
 	registerFunction("movePartToPart", LUA_movePartToPart);
 	registerFunction("getPartByName", LUA_getPartByName);
 	registerFunction("scissorPart", LUA_scissorPart);
+	registerFunction("setIndoors", LUA_setIndoors);
 
 	registerFunction("createNPC", LUA_loadNPC);
 	registerFunction("getCurrentNPC", LUA_getCurrentNPC);

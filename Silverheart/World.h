@@ -90,6 +90,7 @@ public:
 	void setTime(float time);
 	void setCloudLayers(int cloudLayers);
 	void setLastActive(int lastActive);
+	void setIndoors(bool isIndoors);
 
 	Part* getPartFromName(std::string name); //This function goes thru all the parts and looks for one with the name specified //It will return the first part with the name
 	Part* getPartFromID(int partID);
@@ -157,6 +158,7 @@ private:
 	std::vector< Entry >* entry;
 
 	int skyID;
+	bool isIndoors;
 	/*unsigned int skyR;
 	unsigned int skyG;
 	unsigned int skyB;*/

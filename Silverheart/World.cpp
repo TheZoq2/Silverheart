@@ -69,6 +69,7 @@ void World::load(std::string filename)
 				std::string useMsg = "";
 				int platform = 0;
 				int ladder = 0;
+				std::string labels[5];
 
 				std::string name;
 
@@ -148,6 +149,20 @@ void World::load(std::string filename)
 						{
 							ladder = atoi(dataValue.data());
 						}
+						else if(dataType.find("label") != std::string::npos)
+						{
+							std::string labelIDStr = dataType.substr(5, std::string::npos);
+							int labelID = atoi(labelIDStr.data());
+
+							if(labelID >= 0 && labelID < 5)
+							{
+								labels[labelID] = dataValue.data();
+							}
+							else
+							{
+								DebugConsole::addC("Failed to set part label, ID is not in bounds");
+							}
+						}
 						else
 						{
 							DebugConsole::addC("Unrecognised datatype: ");DebugConsole::addC(dataType.data());
@@ -195,6 +210,11 @@ void World::load(std::string filename)
 
 				tempPart.setPlatform(platform);
 				tempPart.setLadder(ladder);
+				
+				for(unsigned int i = 0; i < 5; i++)
+				{
+					tempPart.setLabel(i, labels[i]);
+				}
 
 				this->part->push_back(tempPart);
 				
@@ -461,70 +481,73 @@ void World::updateBG(float playerX, float playerY)
 	int nightG = 25;
 	int nightB = 100;
 
-	//checking if it is nighttime
-	if(time > 2200 || time < 600)
+	if(isIndoors == false)
 	{
-		/*skyR = nightR;
-		skyG = nightG;
-		skyB = nightB;*/
-
-		//Part color
-		for(unsigned int i = 0; i < part->size(); i++)
+		//checking if it is nighttime
+		if(time > 2200 || time < 600)
 		{
-			agk::SetSpriteColor(part->at(i).getSID(), 5, 5, 5, 255);
+			/*skyR = nightR;
+			skyG = nightG;
+			skyB = nightB;*/
+
+			//Part color
+			for(unsigned int i = 0; i < part->size(); i++)
+			{
+				agk::SetSpriteColor(part->at(i).getSID(), 5, 5, 5, 255);
+			}
+
+			//Star color
+			for(unsigned int i = 0; i < stars->size(); i++)
+			{
+				agk::SetSpriteColor(stars->at(i).SID, 255, 255, 255, 255);
+			}
 		}
-
-		//Star color
-		for(unsigned int i = 0; i < stars->size(); i++)
+		else if(time > 600 && time < 800)
 		{
-			agk::SetSpriteColor(stars->at(i).SID, 255, 255, 255, 255);
+			//Calculating the diffirence in color levels
+			float rDiff = 255 - 5;
+			float gDiff = 255 - 5;
+			float bDiff = 255 - 5;
+
+			float timeFact = (time - 600) / 200;
+
+			float r = 5 + rDiff * timeFact;
+			float g = 5 + gDiff * timeFact;
+			float b = 5 + bDiff * timeFact;
+
+			for(unsigned int i = 0; i < part->size(); i++)
+			{
+				agk::SetSpriteColor(part->at(i).getSID(), int( r ), int( g ), int( b ), 255);
+			}
 		}
-	}
-	else if(time > 600 && time < 800)
-	{
-		//Calculating the diffirence in color levels
-		float rDiff = 255 - 5;
-		float gDiff = 255 - 5;
-		float bDiff = 255 - 5;
-
-		float timeFact = (time - 600) / 200;
-
-		float r = 5 + rDiff * timeFact;
-		float g = 5 + gDiff * timeFact;
-		float b = 5 + bDiff * timeFact;
-
-		for(unsigned int i = 0; i < part->size(); i++)
+		else if(time > 800 && time < 1999)
 		{
-			agk::SetSpriteColor(part->at(i).getSID(), int( r ), int( g ), int( b ), 255);
+			/*skyR = dayR;
+			skyG = dayG;
+			skyB = dayB;*/
+
+			for(unsigned int i = 0; i < part->size(); i++)
+			{
+				agk::SetSpriteColor(part->at(i).getSID(), 255, 255, 255, 255);
+			}
 		}
-	}
-	else if(time > 800 && time < 1999)
-	{
-		/*skyR = dayR;
-		skyG = dayG;
-		skyB = dayB;*/
-
-		for(unsigned int i = 0; i < part->size(); i++)
+		else if( time > 2000 && time < 2200)
 		{
-			agk::SetSpriteColor(part->at(i).getSID(), 255, 255, 255, 255);
-		}
-	}
-	else if( time > 2000 && time < 2200)
-	{
-		//Calculating the diffirence in color levels
-		float rDiff = 255 - 5;
-		float gDiff = 255 - 5;
-		float bDiff = 255 - 5;
+			//Calculating the diffirence in color levels
+			float rDiff = 255 - 5;
+			float gDiff = 255 - 5;
+			float bDiff = 255 - 5;
 
-		float timeFact = (time - 2000) / 200;
+			float timeFact = (time - 2000) / 200;
 
-		float r = 255 - rDiff * timeFact;
-		float g = 255 - gDiff * timeFact;
-		float b = 255 - bDiff * timeFact;
+			float r = 255 - rDiff * timeFact;
+			float g = 255 - gDiff * timeFact;
+			float b = 255 - bDiff * timeFact;
 
-		for(unsigned int i = 0; i < part->size(); i++)
-		{
-			agk::SetSpriteColor(part->at(i).getSID(), int( r ), int( g ), int( b ), 255);
+			for(unsigned int i = 0; i < part->size(); i++)
+			{
+				agk::SetSpriteColor(part->at(i).getSID(), int( r ), int( g ), int( b ), 255);
+			}
 		}
 	}
 	
@@ -565,6 +588,15 @@ void World::updateBG(float playerX, float playerY)
 		float xPos = bgParts->at(i).getX() + playerX / 2.0f;
 		float yPos = bgParts->at(i).getY() + playerY / 2.0f - 700;
 		bgParts->at(i).setDrawPos(xPos, yPos);
+	}
+
+	if(isIndoors == true)
+	{
+		agk::SetObjectVisible(skyID, 0);
+	}
+	else
+	{
+		agk::SetObjectVisible(skyID, 1);
 	}
 }
 
@@ -940,6 +972,10 @@ void World::setCloudLayers(int cloudLayers)
 void World::setLastActive(int lastActive)
 {
 	this->lastActive = lastActive;
+}
+void World::setIndoors(bool isIndoors)
+{
+	this->isIndoors = isIndoors;
 }
 
 Part* World::getPartFromName(std::string name) //This function goes thru all the parts and looks for one with the name specified //It will return the first part with the name

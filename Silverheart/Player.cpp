@@ -143,7 +143,7 @@ void Player::update()
 
 	//Positioning the camera
 	cameraX = x - (agk::GetVirtualWidth() / agk::GetViewZoom() / 2);
-	cameraY = y - (agk::GetVirtualHeight() / agk::GetViewZoom() / 2);
+	cameraY = y - (agk::GetVirtualHeight() / agk::GetViewZoom() / 2) - 200;
 
 	agk::SetViewOffset(cameraX, cameraY);
 

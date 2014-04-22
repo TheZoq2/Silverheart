@@ -152,6 +152,7 @@ void Part::incPhysState(int amount)
 
 	agk::SetSpritePhysicsDelete(SID);
 	agk::SetSpritePhysicsOn(SID, physState);
+	agk::SetSpriteShape(SID, 3);
 }
 void Part::setPhysState(int state)
 {
